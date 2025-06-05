@@ -1,0 +1,231 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ENUMS
+enum RoleUsuario {
+  CANDIDATO
+  RECRUTADOR
+  ADMIN
+}
+
+enum NivelProficiencia {
+  INICIANTE
+  INTERMEDIARIO
+  AVANCADO
+  ESPECIALISTA
+  NATIVO
+}
+
+enum TipoVaga {
+  ESTAGIO
+  EFETIVO_JR
+  TRAINEE
+  TEMPORARIO
+  PROJETO
+}
+
+enum StatusCandidatura {
+  INSCRITO
+  VISUALIZADA
+  EM_PROCESSO
+  APROVADO
+  REJEITADO
+  CANCELADA
+}
+
+// MODELOS
+
+model Usuario {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  senha           String    // DEVE SER SALVA HASEADA NO BANCO
+  nome            String
+  numeroRA        String?   @unique
+  fotoUrl         String?
+  role            RoleUsuario @default(CANDIDATO)
+
+  curriculo       Curriculo? @relation("DonoDoCurriculo")
+  empresaId       String?
+  empresa         Empresa?   @relation("RecrutadoresDaEmpresa", fields: [empresaId], references: [id])
+  candidaturas    Candidatura[] @relation("CandidatoAplicou")
+  vagasCriadas    Vaga[]     @relation("CriadorDaVaga")
+
+  criadoEm        DateTime   @default(now())
+  atualizadoEm    DateTime   @updatedAt
+
+  @@map("usuarios")
+  Empresa Empresa[] @relation(name: "EmpresaCadastradaPorAdmin")
+}
+
+model Empresa {
+  id              String    @id @default(cuid())
+  nome            String    @unique
+  cnpj            String?   @unique
+  descricao       String?   @db.Text
+  websiteUrl      String?
+  logoUrl         String?
+  cadastradaPorId String?
+  cadastradaPor   Usuario?  @relation(fields: [cadastradaPorId], references: [id], name: "EmpresaCadastradaPorAdmin")
+
+  recrutadores    Usuario[] @relation("RecrutadoresDaEmpresa")
+  vagas           Vaga[]    @relation("VagasDaEmpresa")
+
+  criadoEm        DateTime  @default(now())
+  atualizadoEm    DateTime  @updatedAt
+
+  @@map("empresas")
+}
+
+model Curriculo {
+  id                        String    @id @default(cuid())
+  titulo                    String
+  resumoProfissional        String?   @db.Text
+  telefone                  String?
+  linkedinUrl               String?
+  githubUrl                 String?
+  portfolioUrl              String?
+  endereco                  String?
+  visibilidade              Boolean   @default(true)
+
+  usuarioId                 String    @unique
+  usuario                   Usuario   @relation("DonoDoCurriculo", fields: [usuarioId], references: [id])
+
+  experienciasProfissionais ExperienciaProfissional[]
+  formacoesAcademicas       FormacaoAcademica[]
+  habilidades               Habilidade[]
+  idiomas                   Idioma[]
+  projetos                  Projeto[]
+  certificacoes             Certificacao[]
+
+  criadoEm                  DateTime  @default(now())
+  atualizadoEm              DateTime  @updatedAt
+
+  @@map("curriculos")
+}
+
+model ExperienciaProfissional {
+  id            String    @id @default(cuid())
+  cargo         String
+  nomeEmpresa   String
+  local         String?
+  dataInicio    DateTime
+  dataFim       DateTime?
+  descricao     String?   @db.Text
+  trabalhoAtual Boolean   @default(false)
+  curriculoId   String
+  curriculo     Curriculo @relation(fields: [curriculoId], references: [id], onDelete: Cascade)
+  @@map("experiencias_profissionais")
+}
+
+model FormacaoAcademica {
+  id            String    @id @default(cuid())
+  instituicao   String
+  curso         String
+  areaEstudo    String?
+  dataInicio    DateTime
+  dataFim       DateTime?
+  descricao     String?   @db.Text
+  emCurso       Boolean   @default(false)
+  curriculoId   String
+  curriculo     Curriculo @relation(fields: [curriculoId], references: [id], onDelete: Cascade)
+  @@map("formacoes_academicas")
+}
+
+model Habilidade {
+  id            String    @id @default(cuid())
+  nome          String
+  nivel         NivelProficiencia?
+  categoria     String?
+  curriculoId   String
+  curriculo     Curriculo @relation(fields: [curriculoId], references: [id], onDelete: Cascade)
+  @@unique([curriculoId, nome])
+  @@map("habilidades")
+}
+
+model Idioma {
+  id            String    @id @default(cuid())
+  nome          String
+  nivel         NivelProficiencia
+  curriculoId   String
+  curriculo     Curriculo @relation(fields: [curriculoId], references: [id], onDelete: Cascade)
+  @@unique([curriculoId, nome])
+  @@map("idiomas")
+}
+
+model Projeto {
+  id                String    @id @default(cuid())
+  nome              String
+  descricao         String?   @db.Text
+  projectUrl        String?
+  repositorioUrl    String?
+  dataInicio        DateTime?
+  dataFim           DateTime?
+  tecnologiasUsadas String[]
+  curriculoId       String
+  curriculo         Curriculo @relation(fields: [curriculoId], references: [id], onDelete: Cascade)
+  @@map("projetos_pessoais")
+}
+
+model Certificacao {
+  id                  String    @id @default(cuid())
+  nome                String
+  organizacaoEmissora String
+  dataEmissao         DateTime
+  dataExpiracao       DateTime?
+  credencialId        String?
+  credencialUrl       String?
+  curriculoId         String
+  curriculo           Curriculo @relation(fields: [curriculoId], references: [id], onDelete: Cascade)
+  @@map("certificacoes")
+}
+
+model Vaga {
+  id              String    @id @default(cuid())
+  titulo          String
+  descricao       String    @db.Text
+  requisitos      String[]
+  tipo            TipoVaga
+  localizacao     String
+  salario         Float?
+  faixaSalarial   String?
+  ativa           Boolean   @default(true)
+
+  empresaId       String
+  empresa         Empresa   @relation("VagasDaEmpresa", fields: [empresaId], references: [id])
+  criadoPorId     String
+  criadoPor       Usuario   @relation("CriadorDaVaga", fields: [criadoPorId], references: [id])
+
+  candidaturas    Candidatura[] @relation("VagaTemCandidaturas")
+
+  dataPublicacao  DateTime  @default(now())
+  dataExpiracao   DateTime?
+  criadoEm        DateTime  @default(now())
+  atualizadoEm    DateTime  @updatedAt
+
+  @@map("vagas")
+}
+
+model Candidatura {
+  id                String      @id @default(cuid())
+  dataCandidatura   DateTime    @default(now())
+  status            StatusCandidatura @default(INSCRITO)
+  cartaApresentacao String?     @db.Text
+
+  usuarioId         String
+  usuario           Usuario     @relation("CandidatoAplicou", fields: [usuarioId], references: [id])
+
+  vagaId            String
+  vaga              Vaga        @relation("VagaTemCandidaturas", fields: [vagaId], references: [id])
+
+  criadoEm          DateTime    @default(now())
+  atualizadoEm      DateTime    @updatedAt
+
+  @@unique([usuarioId, vagaId])
+  @@map("candidaturas")
+}

@@ -1,26 +1,71 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Cores Base da Aplicação (Light Theme) */
+  --color-background: rgb(233, 235, 238);
+  --color-foreground: rgb(31, 41, 55);
+
+  --color-primary: rgb(152, 0, 238);
+  --color-primary-foreground: rgb(255, 255, 255);
+
+  /* Cards e Popovers */
+  --color-card: rgb(255, 255, 255);
+  --color-card-foreground: var(--color-foreground);
+
+  --color-popover: var(--color-card);
+  --color-popover-foreground: var(--color-card-foreground);
+
+  /* Bordas e Inputs */
+  --color-border: rgb(229, 231, 235);
+  --color-input-border: var(--color-border);
+  
+  --color-ring: rgb(166, 77, 255);
+
+  /* Cores de Ação e Estado */
+  --color-secondary: rgb(107, 114, 128);
+  --color-secondary-foreground: rgb(255, 255, 255);
+
+  --color-muted: rgb(243, 244, 246);
+  --color-muted-foreground: rgb(107, 114, 128);
+  
+  --color-accent: var(--color-primary);
+  --color-accent-foreground: var(--color-primary-foreground);
+
+  --color-destructive: rgb(220, 38, 38);
+  --color-destructive-foreground: rgb(255, 255, 255);
+
+  /* Raio da Borda (Radius) */
+  --radius: 0.5rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* Tema Escuro (se você for implementar) */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --color-background: rgb(17, 24, 39);
+  --color-foreground: rgb(229, 231, 235);
+  --color-primary: rgb(196, 122, 245); 
+  --color-primary-foreground: rgb(17, 24, 39);
+  --color-card: rgb(31, 41, 55);
+  --color-card-foreground: var(--color-foreground);
+  --color-popover: var(--color-card);
+  --color-popover-foreground: var(--color-card-foreground);
+  --color-border: rgb(55, 65, 81);
+  --color-input-border: var(--color-border);
+  --color-ring: rgb(166, 77, 255);
+  --color-secondary: rgb(75, 85, 99);
+  --color-secondary-foreground: rgb(229, 231, 235);
+  --color-muted: rgb(55, 65, 81);
+  --color-muted-foreground: rgb(156, 163, 175);
+  --color-accent: var(--color-primary);
+  --color-accent-foreground: var(--color-primary-foreground);
+  --color-destructive: rgb(153, 27, 27);
+  --color-destructive-foreground: rgb(229, 231, 235);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
