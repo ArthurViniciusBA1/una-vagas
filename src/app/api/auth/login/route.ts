@@ -9,7 +9,7 @@ import {
   tLoginCandidato, 
   tLoginEmpresa, 
   tLoginAdmin 
-} from "@/lib/schemas/usuarioSchema";
+} from "@/schemas/usuarioSchema";
 import { prisma } from "@/lib/prisma";
 import { Usuario, RoleUsuario } from "@prisma/client";
 

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { cadastroSchema } from "@/lib/schemas/usuarioSchema";
+import { cadastroSchema } from "@/schemas/usuarioSchema";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { gerarToken } from "@/helpers/jwt";
