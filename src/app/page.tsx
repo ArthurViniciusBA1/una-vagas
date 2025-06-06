@@ -1,8 +1,6 @@
-// src/app/page.tsx
 'use client';
 
-import Footer from "@/components/footer"; //
-import { Briefcase, HouseIcon, User, UserPlus } from "lucide-react";
+import { Briefcase, User, UserPlus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
