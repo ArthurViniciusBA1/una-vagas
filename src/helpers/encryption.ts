@@ -9,7 +9,6 @@ function getEncryptionKeyBuffer(): Buffer {
   if (!encryptionKeyBuffer) {
     const ENCRYPTION_KEY_HEX = process.env.ENCRYPTION_KEY;
     if (!ENCRYPTION_KEY_HEX) {
-      // Mensagem de erro mais específica para o ambiente de execução
       throw new Error('ERRO DE SEGURANÇA: ENCRYPTION_KEY não está definida nas variáveis de ambiente. Verifique as configurações no .env.local (desenvolvimento) ou na Vercel (produção).');
     }
 
