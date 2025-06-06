@@ -1,4 +1,3 @@
-// src/components/custom/FloatingLabelInput.tsx
 "use client";
 
 import * as React from "react";
@@ -11,13 +10,13 @@ interface FloatingLabelInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   id: string;
-  showPasswordToggle?: boolean; // Esta prop controla se o mecanismo de toggle é ativado
+  showPasswordToggle?: boolean;
 }
 
 const FloatingLabelInput = React.forwardRef<
   HTMLInputElement,
   FloatingLabelInputProps
->(({ className, label, id, type, placeholder, value, showPasswordToggle = false, ...props }, ref) => {
+>(({ className, label, id, type, placeholder, value, showPasswordToggle, ...props }, ref) => {
   const internalPlaceholder = placeholder === undefined ? " " : placeholder;
   const [isPasswordVisible, setIsPasswordVisible] = React.useState(false);
 
@@ -25,9 +24,6 @@ const FloatingLabelInput = React.forwardRef<
     setIsPasswordVisible(prev => !prev);
   };
 
-  // Determina o tipo do input:
-  // Se showPasswordToggle for true E o type original for "password", então permite alternar.
-  // Caso contrário, usa o type original.
   const isToggleablePassword = type === "password";
   const inputType = isToggleablePassword ? (isPasswordVisible ? "text" : "password") : type;
 
@@ -36,14 +32,14 @@ const FloatingLabelInput = React.forwardRef<
       <Input
         ref={ref}
         id={id}
-        type={inputType} // Usa o inputType que pode alternar
+        type={inputType}
         placeholder={internalPlaceholder}
         className={cn(
           "peer h-10 w-full rounded border border-input bg-transparent px-3 py-2 text-sm shadow-sm",
           "placeholder-transparent focus:placeholder-gray-400",
           "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
           "disabled:cursor-not-allowed disabled:opacity-50",
-          isToggleablePassword ? "pr-10" : "" // Adiciona padding à direita se o toggle estiver presente e ativo
+          isToggleablePassword ? "pr-10" : ""
         )}
         value={value}
         {...props}
@@ -60,12 +56,10 @@ const FloatingLabelInput = React.forwardRef<
       >
         {label}
       </Label>
-      
-      {/* O botão de toggle só aparece se showPasswordToggle for true E o type original for "password" */}
       {isToggleablePassword && (
-        <button 
-          type="button" // Importante para não submeter o formulário
-          tabIndex={-1} // Para não ser focável por Tab, o input já é. Opcional.
+        <button
+          type="button"
+          tabIndex={-1}
           onClick={togglePasswordVisibility}
           className="absolute inset-y-0 right-0 z-10 flex items-center pr-3 text-gray-500 hover:text-gray-700 cursor-pointer focus:outline-none rounded-full"
           aria-label={isPasswordVisible ? "Ocultar senha" : "Mostrar senha"}
