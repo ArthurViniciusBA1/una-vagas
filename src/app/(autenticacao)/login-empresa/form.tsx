@@ -1,4 +1,3 @@
-// src/app/(autenticacao)/login-empresa/form.tsx
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -9,8 +8,7 @@ import { useRouter } from "next/navigation";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { FloatingLabelInput } from "@/components/custom/FloatingLabelInput";
-import { loginEmpresaSchema, tLoginEmpresa } from "@/lib/schemas/usuarioSchema"; // Schema específico para empresa
-
+import { loginEmpresaSchema, tLoginEmpresa } from "@/schemas/usuarioSchema";
 export default function FormLoginEmpresa() {
   const router = useRouter();
 
@@ -26,10 +24,10 @@ export default function FormLoginEmpresa() {
     try {
       const payload = { 
         ...data, 
-        tipoAcesso: "empresa" // Informa à API que é um login de empresa
+        tipoAcesso: "empresa"
       };
 
-      const res = await fetch("/api/auth/login", { // API Unificada
+      const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -43,7 +41,7 @@ export default function FormLoginEmpresa() {
       }
 
       toast.success("Login realizado com sucesso!");
-      router.push('/empresa/dashboard'); // Redirecionamento para o dashboard da empresa
+      router.push('/empresa/dashboard');
 
     } catch (error) {
       console.error("Erro no login da empresa:", error);

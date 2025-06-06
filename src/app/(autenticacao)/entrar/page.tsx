@@ -1,7 +1,6 @@
-import Footer from "@/components/footer"; //
 import { CornerUpLeft, UserSquare } from "lucide-react";
 import Link from "next/link";
-import FormLoginCandidato from "./form"; // O formulário que definiremos abaixo
+import FormLoginCandidato from "./form"; 
 
 export default function PaginaEntrarCandidato() {
   return (

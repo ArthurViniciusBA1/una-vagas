@@ -1,5 +1,3 @@
-// src/app/(autenticacao)/login-empresa/page.tsx
-import Footer from "@/components/footer";
 import { Briefcase, CornerUpLeft } from "lucide-react";
 import Link from "next/link";
 import FormLoginEmpresa from "./form"; 

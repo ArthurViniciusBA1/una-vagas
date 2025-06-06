@@ -6,11 +6,11 @@ import {
   FormItem,
   FormControl,
   FormMessage,
-} from "@/components/ui/form"; //
-import { Button } from "@/components/ui/button"; //
+} from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { cadastroSchema, tCadastro } from "@/lib/schemas/usuarioSchema"; //
+import { cadastroSchema, tCadastro } from "@/schemas/usuarioSchema";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 

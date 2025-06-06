@@ -1,4 +1,3 @@
-// src/app/(autenticacao)/cadastro/page.tsx
 import { CircleAlert, CornerUpLeft } from "lucide-react";
 import Link from "next/link";
 import RegistroForm from "./form";
