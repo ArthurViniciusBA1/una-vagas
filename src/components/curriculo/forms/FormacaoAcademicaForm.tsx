@@ -71,7 +71,7 @@ export function FormacaoAcademicaForm({ setModalOpen, dadosIniciais }: FormacaoA
           <FormField control={control} name="dataFim" render={({ field }) => ( <FormItem><FormControl><FloatingLabelInput label="Data de Conclusão" id="dataFimFormacao" type="month" {...field} disabled={emCurso} /></FormControl><FormMessage /></FormItem> )}/>
         </div>
         <FormField control={control} name="emCurso" render={({ field }) => (
-            <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-3 shadow-sm h-10">
+            <FormItem className="flex flex-row items-center space-x-3 space-y-0 p-3 h-10">
               <FormControl><Checkbox id="emCurso" checked={field.value} onCheckedChange={field.onChange} /></FormControl>
               <div className="space-y-1 leading-none"><FormLabel htmlFor="emCurso" className="cursor-pointer">Ainda estou cursando</FormLabel></div>
             </FormItem>

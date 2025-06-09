@@ -29,11 +29,17 @@ export function CertificacaoHub({ setModalOpen }: { setModalOpen: (isOpen: boole
     }
   };
 
+  const dadosIniciaisFormatados = certificacaoParaEditar ? {
+    ...certificacaoParaEditar,
+    dataEmissao: new Date(certificacaoParaEditar.dataEmissao).toISOString().substring(0, 7),
+    credencialUrl: certificacaoParaEditar.credencialUrl ?? '',
+  } : null;
+
   if (showForm) {
     return (
         <CertificacaoForm 
             setModalOpen={handleCloseForm}
-            dadosIniciais={certificacaoParaEditar}
+            dadosIniciais={dadosIniciaisFormatados}
         />
     );
   }

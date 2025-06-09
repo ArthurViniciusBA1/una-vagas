@@ -94,7 +94,7 @@ export function CertificacaoForm({ setModalOpen, dadosIniciais }: CertificacaoFo
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <FloatingLabelInput label="URL da Credencial (Opcional)" id="urlCertificado" type="url" {...field} />
+                <FloatingLabelInput label="URL da Credencial (Opcional)" id="urlCertificado" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

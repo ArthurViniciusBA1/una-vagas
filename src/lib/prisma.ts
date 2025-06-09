@@ -1,23 +1,20 @@
 import { PrismaClient } from "@prisma/client";
+import { withAccelerate } from '@prisma/extension-accelerate';
 
-// Declare uma variável global para o PrismaClient em ambiente de desenvolvimento
-// Isso previne que o hot-reloading do Next.js crie múltiplas instâncias do PrismaClient.
-declare global {
-  var prisma: PrismaClient | undefined;
-}
+const prismaClientSingleton = () => {
+  return new PrismaClient().$extends(withAccelerate());
+};
 
-let prisma: PrismaClient;
+type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>;
 
-// Verifica se estamos em ambiente de produção (Vercel ou outro)
-// Em produção, cria uma nova instância do PrismaClient.
-// Em desenvolvimento, usa a instância global para evitar problemas de hot-reloading.
-if (process.env.NODE_ENV === "production") {
-  prisma = new PrismaClient();
-} else {
-  if (!global.prisma) {
-    global.prisma = new PrismaClient();
-  }
-  prisma = global.prisma;
-}
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClientSingleton | undefined;
+};
+
+const prisma = globalForPrisma.prisma ?? prismaClientSingleton();
 
 export { prisma };
+
+if (process.env.NODE_ENV !== 'production') {
+  globalForPrisma.prisma = prisma;
+}

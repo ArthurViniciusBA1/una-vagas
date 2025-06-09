@@ -29,11 +29,18 @@ export function ProjetoHub({ setModalOpen }: { setModalOpen: (isOpen: boolean) =
     }
   };
 
+  const dadosIniciaisFormatados = projetoParaEditar ? {
+    ...projetoParaEditar,
+    descricao: projetoParaEditar.descricao ?? '',
+    projectUrl: projetoParaEditar.projectUrl ?? '',
+    repositorioUrl: projetoParaEditar.repositorioUrl ?? '',
+  } : null;
+
   if (showForm) {
     return (
         <ProjetoForm 
             setModalOpen={handleCloseForm}
-            dadosIniciais={projetoParaEditar}
+            dadosIniciais={dadosIniciaisFormatados}
         />
     );
   }

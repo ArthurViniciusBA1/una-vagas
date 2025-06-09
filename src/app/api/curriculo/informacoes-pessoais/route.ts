@@ -36,28 +36,25 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Dados inválidos.", details: validationResult.error.format() }, { status: 400 });
     }
 
-    const dataToSave: tCurriculoInformacoesPessoais = validationResult.data;
+    const dataFromForm = validationResult.data;
+
+    const dataToSave = {
+        ...dataFromForm,
+        resumoProfissional: dataFromForm.resumoProfissional || null,
+        telefone: dataFromForm.telefone || null,
+        endereco: dataFromForm.endereco || null,
+        linkedinUrl: dataFromForm.linkedinUrl || null,
+        githubUrl: dataFromForm.githubUrl || null,
+        portfolioUrl: dataFromForm.portfolioUrl || null,
+    };
+
 
     const curriculoAtualizado = await prisma.curriculo.upsert({
         where: { usuarioId: userId },
-        update: {
-            titulo: dataToSave.titulo,
-            resumoProfissional: dataToSave.resumoProfissional,
-            telefone: dataToSave.telefone,
-            endereco: dataToSave.endereco,
-            linkedinUrl: dataToSave.linkedinUrl,
-            githubUrl: dataToSave.githubUrl,
-            portfolioUrl: dataToSave.portfolioUrl,
-        },
+        update: dataToSave,
         create: {
             usuarioId: userId,
-            titulo: dataToSave.titulo,
-            resumoProfissional: dataToSave.resumoProfissional,
-            telefone: dataToSave.telefone,
-            endereco: dataToSave.endereco,
-            linkedinUrl: dataToSave.linkedinUrl,
-            githubUrl: dataToSave.githubUrl,
-            portfolioUrl: dataToSave.portfolioUrl,
+            ...dataToSave,
         }
     });
 

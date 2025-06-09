@@ -12,15 +12,22 @@ import { FloatingLabelInput } from "@/components/custom/FloatingLabelInput";
 import { FloatingLabelTextarea } from '@/components/custom/FloatingLabelTextarea';
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2 } from 'lucide-react';
+import { ExperienciaProfissional } from '@prisma/client';
 
 interface ExperienciaProfissionalFormProps {
   setModalOpen: (isOpen: boolean) => void;
-  dadosIniciais?: Partial<tExperienciaProfissional> | null;
+  dadosIniciais?: ExperienciaProfissional | null;
 }
 
 const defaultFormValues: tExperienciaProfissional = {
-  id: "", cargo: "", nomeEmpresa: "", localidade: "",
-  dataInicio: "", dataFim: "", trabalhoAtual: false, descricao: "",
+  id: undefined,
+  cargo: "",
+  nomeEmpresa: "",
+  localidade: "",
+  dataInicio: "",
+  dataFim: "",
+  trabalhoAtual: false,
+  descricao: "",
 };
 
 export function ExperienciaProfissionalForm({ setModalOpen, dadosIniciais }: ExperienciaProfissionalFormProps) {
@@ -32,17 +39,26 @@ export function ExperienciaProfissionalForm({ setModalOpen, dadosIniciais }: Exp
 
   const { reset, watch, formState, control, handleSubmit } = form;
 
-  useEffect(() => {
-    const valuesToSet = dadosIniciais ? { ...defaultFormValues, ...dadosIniciais } : defaultFormValues;
-    reset(valuesToSet);
-  }, [dadosIniciais, reset]);
-
   const trabalhoAtual = watch("trabalhoAtual");
+
+  useEffect(() => {
+    if (dadosIniciais) {
+      const formValues = {
+        ...dadosIniciais,
+        localidade: dadosIniciais.local ?? "",
+        dataInicio: new Date(dadosIniciais.dataInicio).toISOString().substring(0, 7),
+        dataFim: dadosIniciais.dataFim ? new Date(dadosIniciais.dataFim).toISOString().substring(0, 7) : "",
+        descricao: dadosIniciais.descricao ?? "",
+      };
+      reset(formValues);
+    } else {
+      reset(defaultFormValues);
+    }
+  }, [dadosIniciais, reset]);
 
   const onSubmit: SubmitHandler<tExperienciaProfissional> = async (data) => {
     try {
-      const payload = data.trabalhoAtual ? { ...data, dataFim: '' } : data;
-      await saveExperiencia(payload);
+      await saveExperiencia(data);
       setModalOpen(false); 
     } catch (error) {
       console.error("Falha ao submeter o formulário de experiência:", error);
@@ -70,13 +86,13 @@ export function ExperienciaProfissionalForm({ setModalOpen, dadosIniciais }: Exp
           )}/>
         </div>
         <FormField control={control} name="trabalhoAtual" render={({ field }) => (
-            <FormItem className="flex flex-row items-center">
+            <FormItem className="flex flex-row items-center space-x-3 space-y-0 p-3 h-1">
               <FormControl><Checkbox id="trabalhoAtualExp" checked={field.value} onCheckedChange={field.onChange} /></FormControl>
-              <label htmlFor="trabalhoAtualExp" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Trabalho Atual</label>
+              <FormLabel htmlFor="trabalhoAtualExp" className="cursor-pointer">Trabalho Atual</FormLabel>
             </FormItem>
         )}/>
         <FormField control={control} name="descricao" render={({ field }) => (
-            <FormItem><FormControl><FloatingLabelTextarea label="Descrição (responsabilidades, conquistas, etc.)" id="descricaoExp" rows={5} {...field} /></FormControl><FormMessage /></FormItem>
+            <FormItem><FormControl><FloatingLabelTextarea label="Descrição (responsabilidades, etc.)" id="descricaoExp" rows={5} {...field} /></FormControl><FormMessage /></FormItem>
         )}/>
         <DialogFooter className="pt-4">
           <DialogClose asChild><Button type="button" variant="outline">Cancelar</Button></DialogClose>

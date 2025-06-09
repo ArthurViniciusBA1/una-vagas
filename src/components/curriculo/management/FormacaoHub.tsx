@@ -31,9 +31,9 @@ export function FormacaoHub({ setModalOpen }: { setModalOpen: (isOpen: boolean) 
   const dadosIniciaisFormatados = formacaoParaEditar ? {
     ...formacaoParaEditar,
     dataInicio: new Date(formacaoParaEditar.dataInicio).toISOString().substring(0, 7),
-    dataFim: formacaoParaEditar.dataFim ? new Date(formacaoParaEditar.dataFim).toISOString().substring(0, 7) : undefined,
-    descricao: formacaoParaEditar.descricao ?? undefined,
-    areaEstudo: formacaoParaEditar.areaEstudo ?? undefined,
+    dataFim: formacaoParaEditar.dataFim ? new Date(formacaoParaEditar.dataFim).toISOString().substring(0, 7) : '',
+    descricao: formacaoParaEditar.descricao ?? '',
+    areaEstudo: formacaoParaEditar.areaEstudo ?? '',
   } : null;
 
   if (view === 'form') {

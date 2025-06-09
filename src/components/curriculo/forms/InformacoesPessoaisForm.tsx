@@ -36,16 +36,18 @@ export function InformacoesPessoaisForm({ setModalOpen }: InformacoesPessoaisFor
   });
 
   useEffect(() => {
+    console.log("Dados do currículo recebidos no formulário:", curriculo);
+
     if (curriculo) {
-        form.reset({
-            titulo: curriculo.titulo ?? "",
-            resumoProfissional: curriculo.resumoProfissional ?? "",
-            telefone: curriculo.telefone ?? "",
-            endereco: curriculo.endereco ?? "",
-            linkedinUrl: curriculo.linkedinUrl ?? "",
-            githubUrl: curriculo.githubUrl ?? "",
-            portfolioUrl: curriculo.portfolioUrl ?? "",
-        });
+      form.reset({
+        titulo: curriculo.titulo ?? "",
+        resumoProfissional: curriculo.resumoProfissional ?? "",
+        telefone: curriculo.telefone ?? "",
+        endereco: curriculo.endereco ?? "",
+        linkedinUrl: curriculo.linkedinUrl ?? "",
+        githubUrl: curriculo.githubUrl ?? "",
+        portfolioUrl: curriculo.portfolioUrl ?? "",
+      });
     }
   }, [curriculo, form.reset]);
 
@@ -67,7 +69,7 @@ export function InformacoesPessoaisForm({ setModalOpen }: InformacoesPessoaisFor
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <FloatingLabelInput label="Título do Currículo" id="tituloCurriculoModal" {...field} />
+                <FloatingLabelInput label="Título do Currículo" id="tituloModal" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -82,9 +84,8 @@ export function InformacoesPessoaisForm({ setModalOpen }: InformacoesPessoaisFor
                 <FloatingLabelTextarea 
                   label="Resumo Profissional / Sobre Mim" 
                   id="resumoProfissionalModal" 
-                  rows={5} 
-                  placeholder=" "
-                  {...field} 
+                  rows={5}
+                  {...field}
                 />
               </FormControl>
               <FormMessage />
@@ -97,7 +98,7 @@ export function InformacoesPessoaisForm({ setModalOpen }: InformacoesPessoaisFor
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <FloatingLabelInput label="Telefone (com DDD)" id="telefoneModal" type="tel" {...field} inputMode='numeric' autoComplete='tel'/>
+                <FloatingLabelInput label="Telefone (com DDD)" id="telefoneModal" type="tel" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -109,7 +110,7 @@ export function InformacoesPessoaisForm({ setModalOpen }: InformacoesPessoaisFor
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <FloatingLabelInput label="Endereço (Ex: Cidade - UF)" id="enderecoCompletoModal" {...field} />
+                <FloatingLabelInput label="Endereço (Ex: Cidade - UF)" id="enderecoModal" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -156,12 +157,7 @@ export function InformacoesPessoaisForm({ setModalOpen }: InformacoesPessoaisFor
             <Button type="button" variant="outline">Cancelar</Button>
           </DialogClose>
           <Button type="submit" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Salvando...
-              </>
-            ) : "Salvar Informações"}
+            {form.formState.isSubmitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Salvando...</> : "Salvar Informações"}
           </Button>
         </DialogFooter>
       </form>
