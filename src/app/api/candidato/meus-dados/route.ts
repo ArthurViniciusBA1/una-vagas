@@ -1,9 +1,8 @@
-import { RoleUsuario } from '@prisma/client';
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-
+import { cookies } from 'next/headers';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { prisma } from '@/lib/prisma';
+import { RoleUsuario } from '@prisma/client';
 
 interface TokenPayload extends JwtPayload {
   id: string;
@@ -16,57 +15,72 @@ export async function GET() {
   const jwtSecret = process.env.JWT_SECRET;
 
   if (!jwtSecret) {
-    return NextResponse.json({ error: "Configuração do servidor incompleta." }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Configuração do servidor incompleta.' },
+      { status: 500 }
+    );
   }
   if (!token) {
-    return NextResponse.json({ error: "Usuário não autenticado." }, { status: 401 });
+    return NextResponse.json(
+      { error: 'Usuário não autenticado.' },
+      { status: 401 }
+    );
   }
 
   try {
     const decodedToken = jwt.verify(token, jwtSecret) as TokenPayload;
-    if (!decodedToken?.id || (decodedToken.role !== RoleUsuario.CANDIDATO && decodedToken.role !== RoleUsuario.ADMIN)) {
-      return NextResponse.json({ error: "Acesso não autorizado." }, { status: 403 });
+    if (
+      !decodedToken?.id ||
+      (decodedToken.role !== RoleUsuario.CANDIDATO &&
+        decodedToken.role !== RoleUsuario.ADMIN)
+    ) {
+      return NextResponse.json(
+        { error: 'Acesso não autorizado.' },
+        { status: 403 }
+      );
     }
 
     const usuario = await prisma.usuario.findUnique({
       where: { id: decodedToken.id },
-      select: { 
-        id: true, 
-        nome: true, 
-        email: true, 
-        numeroRA: true, 
+      select: {
+        id: true,
+        nome: true,
+        email: true,
+        numeroRA: true,
         role: true,
-      }
+      },
     });
 
     if (!usuario) {
-      return NextResponse.json({ error: "Usuário não encontrado." }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Usuário não encontrado.' },
+        { status: 404 }
+      );
     }
 
     const curriculo = await prisma.curriculo.findUnique({
       where: { usuarioId: usuario.id },
-      include: { 
+      include: {
+        // Garantindo que todos os includes necessários para o tipo CurriculoCompleto estejam aqui
+        usuario: { select: { id: true, nome: true, email: true } },
         experienciasProfissionais: true,
         formacoesAcademicas: true,
         habilidades: true,
         idiomas: true,
         projetos: true,
         certificacoes: true,
-      }
+      },
     });
 
-    const curriculoData = curriculo ? {
-        ...curriculo,
-    } : null;
-
-
-    return NextResponse.json({ usuario, curriculo: curriculoData });
-
+    return NextResponse.json({ usuario, curriculo });
   } catch (error) {
-    console.error("API Error /api/candidato/meus-dados:", error);
+    console.error('API Error /api/candidato/meus-dados:', error);
     if (error instanceof jwt.JsonWebTokenError) {
       return NextResponse.json({ error: 'Token inválido.' }, { status: 401 });
     }
-    return NextResponse.json({ error: "Erro ao buscar dados do candidato." }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Erro ao buscar dados do candidato.' },
+      { status: 500 }
+    );
   }
 }

@@ -1,10 +1,30 @@
 "use client";
 
-import { Certificacao,ExperienciaProfissional, FormacaoAcademica, Habilidade, Idioma, Projeto, RoleUsuario } from '@prisma/client';
-import React, { createContext, ReactNode, useCallback, useContext, useEffect,useState } from 'react';
+import { Prisma, RoleUsuario } from '@prisma/client';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-import { tCertificacao,tCurriculoInformacoesPessoais, tExperienciaProfissional, tFormacaoAcademica, tHabilidade, tIdioma, tProjeto } from '@/schemas/curriculoSchema';
+import { tCertificacao, tCurriculoInformacoesPessoais, tExperienciaProfissional, tFormacaoAcademica, tHabilidade, tIdioma, tProjeto } from '@/schemas/curriculoSchema';
+
+// 1. DEFINIÇÃO COMPLETA E ÚNICA DO TIPO
+// Adicionamos a relação 'usuario' aqui.
+const curriculoCompletoArgs = Prisma.validator<Prisma.CurriculoDefaultArgs>()({
+    include: {
+        usuario: { select: { id: true, nome: true, email: true } },
+        experienciasProfissionais: true,
+        formacoesAcademicas: true,
+        habilidades: true,
+        idiomas: true,
+        projetos: true,
+        certificacoes: true,
+    }
+});
+
+// Este é o nosso tipo oficial e único para um currículo com todas as relações
+export type CurriculoCompleto = Prisma.CurriculoGetPayload<typeof curriculoCompletoArgs>;
+
+
+// --- O resto do contexto ---
 
 interface CandidatoProfileData {
   id: string;
@@ -14,28 +34,9 @@ interface CandidatoProfileData {
   role: RoleUsuario;
 }
 
-interface CurriculoData {
-  titulo: string;
-  endereco: string;
-  id?: string | null;
-  usuarioId?: string;
-  resumoProfissional?: string | null;
-  telefone?: string | null;
-  linkedinUrl?: string | null;
-  githubUrl?: string | null;
-  portfolioUrl?: string | null;
-  visibilidade?: boolean;
-  experienciasProfissionais?: ExperienciaProfissional[];
-  formacoesAcademicas?: FormacaoAcademica[];
-  habilidades?: Habilidade[];
-  idiomas?: Idioma[];
-  projetos?: Projeto[];
-  certificacoes?: Certificacao[];
-}
-
 interface CandidatoContextType {
   candidato: CandidatoProfileData | null;
-  curriculo: CurriculoData | null;
+  curriculo: CurriculoCompleto | null; // Usamos o tipo correto
   isLoading: boolean;
   error: string | null;
   fetchCandidatoData: () => Promise<void>;
@@ -56,9 +57,9 @@ interface CandidatoContextType {
 
 const CandidatoContext = createContext<CandidatoContextType | undefined>(undefined);
 
-export const CandidatoProvider = ({ children }: { children: ReactNode }) => {
+export const CandidatoProvider = ({ children }: { children: React.ReactNode }) => {
   const [candidato, setCandidato] = useState<CandidatoProfileData | null>(null);
-  const [curriculo, setCurriculo] = useState<CurriculoData | null>(null);
+  const [curriculo, setCurriculo] = useState<CurriculoCompleto | null>(null); // Usamos o tipo correto
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -85,6 +86,7 @@ export const CandidatoProvider = ({ children }: { children: ReactNode }) => {
     fetchCandidatoData();
   }, [fetchCandidatoData]);
 
+  // As funções de save/delete não precisam de alteração
   const updateInformacoesPessoais = async (data: tCurriculoInformacoesPessoais) => {
     try {
       const response = await fetch('/api/curriculo/informacoes-pessoais', {

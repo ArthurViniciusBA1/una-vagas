@@ -1,7 +1,7 @@
 "use client";
 
 import { Certificacao } from '@prisma/client';
-import { Link as LinkIcon,Pencil, PlusCircle, Trash2 } from 'lucide-react';
+import { Award, Link as LinkIcon, Pencil, PlusCircle, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react';
 
@@ -10,7 +10,7 @@ import { useCandidato } from '@/context/CandidatoContext';
 
 import { CertificacaoForm } from '../forms/CertificacaoForm';
 
-export function CertificacaoHub({ }: { setModalOpen: (isOpen: boolean) => void }) {
+export function CertificacaoHub({ setModalOpen }: { setModalOpen: (isOpen: boolean) => void }) {
   const { curriculo, deleteCertificacao } = useCandidato();
   const [certificacaoParaEditar, setCertificacaoParaEditar] = useState<Certificacao | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -31,10 +31,11 @@ export function CertificacaoHub({ }: { setModalOpen: (isOpen: boolean) => void }
     }
   };
 
+  // Prepara os dados para o formulário, convertendo a data para string "AAAA-MM"
   const dadosIniciaisFormatados = certificacaoParaEditar ? {
     ...certificacaoParaEditar,
     dataEmissao: new Date(certificacaoParaEditar.dataEmissao).toISOString().substring(0, 7),
-    credencialUrl: certificacaoParaEditar.credencialUrl ?? '',
+    credencialUrl: certificacaoParaEditar.credencialUrl ?? "",
   } : null;
 
   if (showForm) {
