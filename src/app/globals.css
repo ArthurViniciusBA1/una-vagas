@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   /* Cores Base da Aplicação (Light Theme) */
@@ -18,7 +18,7 @@
   /* Bordas e Inputs */
   --color-border: rgb(229, 231, 235);
   --color-input-border: var(--color-border);
-  
+
   --color-ring: rgb(166, 77, 255);
 
   /* Cores de Ação e Estado */
@@ -27,7 +27,7 @@
 
   --color-muted: rgb(243, 244, 246);
   --color-muted-foreground: rgb(107, 114, 128);
-  
+
   --color-accent: var(--color-primary);
   --color-accent-foreground: var(--color-primary-foreground);
 
@@ -43,7 +43,7 @@
 .dark {
   --color-background: rgb(17, 24, 39);
   --color-foreground: rgb(229, 231, 235);
-  --color-primary: rgb(196, 122, 245); 
+  --color-primary: rgb(196, 122, 245);
   --color-primary-foreground: rgb(17, 24, 39);
   --color-card: rgb(31, 41, 55);
   --color-card-foreground: var(--color-foreground);

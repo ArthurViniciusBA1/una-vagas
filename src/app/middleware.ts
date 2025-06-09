@@ -10,15 +10,22 @@ interface TokenPayload extends JwtPayload {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const publicAuthEntryPages = ['/entrar', '/cadastro', '/login-empresa', '/admin/login'];
+  const publicAuthEntryPages = [
+    '/entrar',
+    '/cadastro',
+    '/login-empresa',
+    '/admin/login',
+  ];
   const isCurrentRouteAnAuthPage = publicAuthEntryPages.includes(pathname);
 
-  if (pathname.startsWith('/_next') || 
-      pathname.startsWith('/assets') || 
-      pathname.startsWith('/api/') ||
-      pathname === '/favicon.ico' ||
-      pathname === '/erro-configuracao' ||
-      pathname === '/acesso-negado') {
+  if (
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/assets') ||
+    pathname.startsWith('/api/') ||
+    pathname === '/favicon.ico' ||
+    pathname === '/erro-configuracao' ||
+    pathname === '/acesso-negado'
+  ) {
     return NextResponse.next();
   }
 
@@ -30,20 +37,28 @@ export async function middleware(request: NextRequest) {
       try {
         const decodedToken = jwt.verify(token, jwtSecret) as TokenPayload;
         if (isCurrentRouteAnAuthPage) {
-          console.log(`Middleware: Usuário autenticado (Role: ${decodedToken.role}) em página de autenticação (${pathname}). Redirecionando...`);
+          console.log(
+            `Middleware: Usuário autenticado (Role: ${decodedToken.role}) em página de autenticação (${pathname}). Redirecionando...`
+          );
           switch (decodedToken.role) {
             case 'ADMIN':
-              return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+              return NextResponse.redirect(
+                new URL('/admin/dashboard', request.url)
+              );
             case 'RECRUTADOR':
-              return NextResponse.redirect(new URL('/empresa/dashboard', request.url));
+              return NextResponse.redirect(
+                new URL('/empresa/dashboard', request.url)
+              );
             case 'CANDIDATO':
             default:
-              return NextResponse.redirect(new URL('/candidato/dashboard', request.url));
+              return NextResponse.redirect(
+                new URL('/candidato/dashboard', request.url)
+              );
           }
         }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
-        console.warn("Middleware: Token inválido encontrado.");
+        console.warn('Middleware: Token inválido encontrado.');
       }
     }
   }
@@ -51,7 +66,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico).*)',
-  ],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 };

@@ -9,12 +9,16 @@ function getEncryptionKeyBuffer(): Buffer {
   if (!encryptionKeyBuffer) {
     const ENCRYPTION_KEY_HEX = process.env.ENCRYPTION_KEY;
     if (!ENCRYPTION_KEY_HEX) {
-      throw new Error('ERRO DE SEGURANÇA: ENCRYPTION_KEY não está definida nas variáveis de ambiente. Verifique as configurações no .env.local (desenvolvimento) ou na Vercel (produção).');
+      throw new Error(
+        'ERRO DE SEGURANÇA: ENCRYPTION_KEY não está definida nas variáveis de ambiente. Verifique as configurações no .env.local (desenvolvimento) ou na Vercel (produção).'
+      );
     }
 
     const tempKeyBuffer = Buffer.from(ENCRYPTION_KEY_HEX, 'hex');
     if (tempKeyBuffer.length !== 32) {
-      throw new Error(`ERRO DE SEGURANÇA: ENCRYPTION_KEY tem formato ou comprimento inválido (${tempKeyBuffer.length} bytes). Esperado 32 bytes (64 caracteres hexadecimais) para AES-256.`);
+      throw new Error(
+        `ERRO DE SEGURANÇA: ENCRYPTION_KEY tem formato ou comprimento inválido (${tempKeyBuffer.length} bytes). Esperado 32 bytes (64 caracteres hexadecimais) para AES-256.`
+      );
     }
     encryptionKeyBuffer = tempKeyBuffer;
   }
@@ -31,7 +35,11 @@ export function encrypt(text: string): string {
 
 export function decrypt(text: string): string {
   const iv = Buffer.alloc(IV_LENGTH, 0); // IV fixo
-  const decipher = crypto.createDecipheriv(ALGORITHM, getEncryptionKeyBuffer(), iv);
+  const decipher = crypto.createDecipheriv(
+    ALGORITHM,
+    getEncryptionKeyBuffer(),
+    iv
+  );
   let decrypted = decipher.update(text, 'hex', 'utf8');
   decrypted += decipher.final('utf8');
   return decrypted;
