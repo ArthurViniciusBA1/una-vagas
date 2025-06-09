@@ -45,7 +45,7 @@ export default function CandidatoDashboardPage() {
   const linkBaseCurriculoEdicaoCompleta = "/candidato/curriculo/editar-completo";
 
   const secoesCurriculo = [
-    { nome: "Informações Pessoais", icon: UserCircle2, action: () => setActiveModal('infoPessoal'), filled: !!curriculo?.tituloCurriculo },
+    { nome: "Informações Pessoais", icon: UserCircle2, action: () => setActiveModal('infoPessoal'), filled: !!curriculo?.titulo },
     { nome: "Experiências Profissionais", icon: Briefcase, action: () => setActiveModal('experiencia'), filled: (curriculo?.experienciasProfissionais?.length ?? 0) > 0 },
     { nome: "Formação Acadêmica", icon: FileText, action: () => setActiveModal('formacao'), filled: (curriculo?.formacoesAcademicas?.length ?? 0) > 0 },
     { nome: "Habilidades", icon: Star, action: () => setActiveModal('habilidades'), filled: (curriculo?.habilidades?.length ?? 0) > 0 },
@@ -73,9 +73,9 @@ export default function CandidatoDashboardPage() {
             <p className="text-sm">Clique em "Informações Pessoais" para começar a preencher!</p>
           </div>
         )}
-        {curriculo?.id && curriculo.tituloCurriculo && (
+        {curriculo?.id && curriculo.titulo && (
           <p className="mb-6 text-muted-foreground">
-            Seu currículo atual: <span className="font-semibold text-foreground">{curriculo.tituloCurriculo}</span>
+            Seu currículo atual: <span className="font-semibold text-foreground">{curriculo.titulo}</span>
           </p>
         )}
 
