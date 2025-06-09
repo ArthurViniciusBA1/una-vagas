@@ -67,19 +67,22 @@ function CurriculoSecao({ titulo, icon, children }: { titulo: string, icon: Reac
     );
 }
 
-// A CORREÇÃO É NA ASSINATURA DA FUNÇÃO ABAIXO:
-export default async function PaginaVisualizacaoCurriculo({ params: { curriculoId } }: { params: { curriculoId: string } }) {
+export default async function PaginaVisualizacaoCurriculo(props: { params: Promise<{ curriculoId: string }> }) {
+    const params = await props.params;
+
+    const {
+        curriculoId
+    } = params;
 
     const cookieStore = await cookies();
     const token = cookieStore.get('token')?.value;
     const jwtSecret = process.env.JWT_SECRET;
-    
+
     if (!token || !jwtSecret) {
         redirect('/entrar');
     }
 
     const curriculo: CurriculoCompleto | null = await prisma.curriculo.findUnique({
-        // Usamos a variável 'curriculoId' diretamente
         where: { id: curriculoId },
         ...curriculoQueryArgs 
     });
