@@ -140,7 +140,6 @@ model FormacaoAcademica {
 model Habilidade {
   id            String    @id @default(cuid())
   nome          String
-  nivel         NivelProficiencia?
   categoria     String?
   curriculoId   String
   curriculo     Curriculo @relation(fields: [curriculoId], references: [id], onDelete: Cascade)
