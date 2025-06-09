@@ -25,26 +25,28 @@ export function InformacoesPessoaisForm({ setModalOpen }: InformacoesPessoaisFor
   const form = useForm<tCurriculoInformacoesPessoais>({
     resolver: zodResolver(curriculoInformacoesPessoaisSchema),
     defaultValues: {
-      tituloCurriculo: curriculo?.tituloCurriculo || "",
-      resumoProfissional: curriculo?.resumoProfissional || "",
-      telefone: curriculo?.telefone || "",
-      enderecoCompleto: curriculo?.enderecoCompleto || "",
-      linkedinUrl: curriculo?.linkedinUrl || "",
-      githubUrl: curriculo?.githubUrl || "",
-      portfolioUrl: curriculo?.portfolioUrl || "",
+      titulo: "",
+      resumoProfissional: "",
+      telefone: "",
+      endereco: "",
+      linkedinUrl: "",
+      githubUrl: "",
+      portfolioUrl: "",
     },
   });
 
   useEffect(() => {
-    form.reset({
-      tituloCurriculo: curriculo?.tituloCurriculo || "",
-      resumoProfissional: curriculo?.resumoProfissional || "",
-      telefone: curriculo?.telefone || "",
-      enderecoCompleto: curriculo?.enderecoCompleto || "",
-      linkedinUrl: curriculo?.linkedinUrl || "",
-      githubUrl: curriculo?.githubUrl || "",
-      portfolioUrl: curriculo?.portfolioUrl || "",
-    });
+    if (curriculo) {
+        form.reset({
+            titulo: curriculo.titulo ?? "",
+            resumoProfissional: curriculo.resumoProfissional ?? "",
+            telefone: curriculo.telefone ?? "",
+            endereco: curriculo.endereco ?? "",
+            linkedinUrl: curriculo.linkedinUrl ?? "",
+            githubUrl: curriculo.githubUrl ?? "",
+            portfolioUrl: curriculo.portfolioUrl ?? "",
+        });
+    }
   }, [curriculo, form.reset]);
 
   const onSubmit = async (data: tCurriculoInformacoesPessoais) => {
@@ -61,7 +63,7 @@ export function InformacoesPessoaisForm({ setModalOpen }: InformacoesPessoaisFor
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
         <FormField
           control={form.control}
-          name="tituloCurriculo"
+          name="titulo"
           render={({ field }) => (
             <FormItem>
               <FormControl>
@@ -103,7 +105,7 @@ export function InformacoesPessoaisForm({ setModalOpen }: InformacoesPessoaisFor
         />
         <FormField
           control={form.control}
-          name="enderecoCompleto"
+          name="endereco"
           render={({ field }) => (
             <FormItem>
               <FormControl>

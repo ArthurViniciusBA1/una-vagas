@@ -38,39 +38,30 @@ export async function POST(request: Request) {
 
     const dataToSave: tCurriculoInformacoesPessoais = validationResult.data;
 
-    let curriculo = await prisma.curriculo.findUnique({
-      where: { usuarioId: userId },
+    const curriculoAtualizado = await prisma.curriculo.upsert({
+        where: { usuarioId: userId },
+        update: {
+            titulo: dataToSave.titulo,
+            resumoProfissional: dataToSave.resumoProfissional,
+            telefone: dataToSave.telefone,
+            endereco: dataToSave.endereco,
+            linkedinUrl: dataToSave.linkedinUrl,
+            githubUrl: dataToSave.githubUrl,
+            portfolioUrl: dataToSave.portfolioUrl,
+        },
+        create: {
+            usuarioId: userId,
+            titulo: dataToSave.titulo,
+            resumoProfissional: dataToSave.resumoProfissional,
+            telefone: dataToSave.telefone,
+            endereco: dataToSave.endereco,
+            linkedinUrl: dataToSave.linkedinUrl,
+            githubUrl: dataToSave.githubUrl,
+            portfolioUrl: dataToSave.portfolioUrl,
+        }
     });
 
-    if (curriculo) {
-      curriculo = await prisma.curriculo.update({
-        where: { id: curriculo.id },
-        data: {
-          titulo: dataToSave.tituloCurriculo,
-          resumoProfissional: dataToSave.resumoProfissional,
-          telefone: dataToSave.telefone,
-          endereco: dataToSave.enderecoCompleto,
-          linkedinUrl: dataToSave.linkedinUrl,
-          githubUrl: dataToSave.githubUrl,
-          portfolioUrl: dataToSave.portfolioUrl,
-        },
-      });
-    } else {
-      curriculo = await prisma.curriculo.create({
-        data: {
-          usuarioId: userId,
-          titulo: dataToSave.tituloCurriculo,
-          resumoProfissional: dataToSave.resumoProfissional,
-          telefone: dataToSave.telefone,
-          endereco: dataToSave.enderecoCompleto,
-          linkedinUrl: dataToSave.linkedinUrl,
-          githubUrl: dataToSave.githubUrl,
-          portfolioUrl: dataToSave.portfolioUrl,
-        },
-      });
-    }
-
-    return NextResponse.json({ message: "Informações pessoais salvas com sucesso!", curriculo }, { status: 200 });
+    return NextResponse.json({ message: "Informações pessoais salvas com sucesso!", curriculo: curriculoAtualizado }, { status: 200 });
 
   } catch (error) {
     console.error("API Error /api/curriculo/informacoes-pessoais:", error);

@@ -47,11 +47,11 @@ export default function CandidatoDashboardPage() {
   const secoesCurriculo = [
     { nome: "Informações Pessoais", icon: UserCircle2, action: () => setActiveModal('infoPessoal'), filled: !!curriculo?.tituloCurriculo },
     { nome: "Experiências Profissionais", icon: Briefcase, action: () => setActiveModal('experiencia'), filled: (curriculo?.experienciasProfissionais?.length ?? 0) > 0 },
-    { nome: "Formação Acadêmica", icon: FileText, action: () => setActiveModal('formacao'), filled: false },
-    { nome: "Habilidades", icon: Star, action: () => setActiveModal('habilidades'), filled: false },
-    { nome: "Idiomas", icon: Languages, action: () => setActiveModal('idiomas'), filled: false },
-    { nome: "Projetos", icon: Lightbulb, action: () => setActiveModal('projetos'), filled: false },
-    { nome: "Certificações", icon: Award, action: () => setActiveModal('certificacoes'), filled: false },
+    { nome: "Formação Acadêmica", icon: FileText, action: () => setActiveModal('formacao'), filled: (curriculo?.formacoesAcademicas?.length ?? 0) > 0 },
+    { nome: "Habilidades", icon: Star, action: () => setActiveModal('habilidades'), filled: (curriculo?.habilidades?.length ?? 0) > 0 },
+    { nome: "Idiomas", icon: Languages, action: () => setActiveModal('idiomas'), filled: (curriculo?.idiomas?.length ?? 0) > 0 },
+    { nome: "Projetos", icon: Lightbulb, action: () => setActiveModal('projetos'), filled: (curriculo?.projetos?.length ?? 0) > 0 },
+    { nome: "Certificações", icon: Award, action: () => setActiveModal('certificacoes'), filled: (curriculo?.certificacoes?.length ?? 0) > 0 },
   ];
 
   return (

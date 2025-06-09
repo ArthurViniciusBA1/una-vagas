@@ -2,8 +2,8 @@
 
 import React, { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
 import { toast } from 'sonner';
-import { RoleUsuario, ExperienciaProfissional, FormacaoAcademica } from '@prisma/client';
-import { tCurriculoInformacoesPessoais, tExperienciaProfissional, tFormacaoAcademica } from '@/schemas/curriculoSchema';
+import { RoleUsuario, ExperienciaProfissional, FormacaoAcademica, Habilidade, Idioma, Projeto, Certificacao } from '@prisma/client';
+import { tCurriculoInformacoesPessoais, tExperienciaProfissional, tFormacaoAcademica, tHabilidade, tIdioma, tProjeto, tCertificacao } from '@/schemas/curriculoSchema';
 
 interface CandidatoProfileData {
   id: string;
@@ -14,18 +14,22 @@ interface CandidatoProfileData {
 }
 
 interface CurriculoData {
+  titulo: string;
+  endereco: string;
   id?: string | null;
   usuarioId?: string;
-  tituloCurriculo?: string | null;
   resumoProfissional?: string | null;
   telefone?: string | null;
-  enderecoCompleto?: string | null;
   linkedinUrl?: string | null;
   githubUrl?: string | null;
   portfolioUrl?: string | null;
   visibilidade?: boolean;
   experienciasProfissionais?: ExperienciaProfissional[];
   formacoesAcademicas?: FormacaoAcademica[];
+  habilidades?: Habilidade[];
+  idiomas?: Idioma[];
+  projetos?: Projeto[];
+  certificacoes?: Certificacao[];
 }
 
 interface CandidatoContextType {
@@ -39,6 +43,14 @@ interface CandidatoContextType {
   deleteExperiencia: (id: string) => Promise<void>;
   saveFormacao: (data: tFormacaoAcademica) => Promise<void>;
   deleteFormacao: (id: string) => Promise<void>;
+  saveHabilidade: (data: tHabilidade) => Promise<void>;
+  deleteHabilidade: (id: string) => Promise<void>;
+  saveIdioma: (data: tIdioma) => Promise<void>;
+  deleteIdioma: (id: string) => Promise<void>;
+  saveProjeto: (data: tProjeto) => Promise<void>;
+  deleteProjeto: (id: string) => Promise<void>;
+  saveCertificacao: (data: tCertificacao) => Promise<void>;
+  deleteCertificacao: (id: string) => Promise<void>;
 }
 
 const CandidatoContext = createContext<CandidatoContextType | undefined>(undefined);
@@ -151,6 +163,135 @@ export const CandidatoProvider = ({ children }: { children: ReactNode }) => {
       throw err;
     }
   };
+  
+  const saveHabilidade = async (data: tHabilidade) => {
+    try {
+      const response = await fetch('/api/curriculo/habilidades', {
+        method: data.id ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) throw new Error((await response.json()).error || "Falha ao salvar habilidade.");
+      toast.success("Habilidade salva com sucesso!");
+      await fetchCandidatoData();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao salvar habilidade.");
+      throw err;
+    }
+  };
+
+  const deleteHabilidade = async (id: string) => {
+    try {
+      const response = await fetch(`/api/curriculo/habilidades`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      if (!response.ok) throw new Error((await response.json()).error || "Falha ao remover habilidade.");
+      toast.success("Habilidade removida com sucesso!");
+      await fetchCandidatoData();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao remover habilidade.");
+      throw err;
+    }
+  };
+
+  const saveIdioma = async (data: tIdioma) => {
+    try {
+      const response = await fetch('/api/curriculo/idiomas', {
+        method: data.id ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) throw new Error((await response.json()).error || "Falha ao salvar idioma.");
+      toast.success("Idioma salvo com sucesso!");
+      await fetchCandidatoData();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao salvar idioma.");
+      throw err;
+    }
+  };
+
+  const deleteIdioma = async (id: string) => {
+    try {
+      const response = await fetch(`/api/curriculo/idiomas`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      if (!response.ok) throw new Error((await response.json()).error || "Falha ao remover idioma.");
+      toast.success("Idioma removido com sucesso!");
+      await fetchCandidatoData();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao remover idioma.");
+      throw err;
+    }
+  };
+
+  const saveProjeto = async (data: tProjeto) => {
+    try {
+      const response = await fetch('/api/curriculo/projetos', {
+        method: data.id ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) throw new Error((await response.json()).error || "Falha ao salvar projeto.");
+      toast.success("Projeto salvo com sucesso!");
+      await fetchCandidatoData();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao salvar projeto.");
+      throw err;
+    }
+  };
+
+  const deleteProjeto = async (id: string) => {
+    try {
+      const response = await fetch(`/api/curriculo/projetos`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      if (!response.ok) throw new Error((await response.json()).error || "Falha ao remover projeto.");
+      toast.success("Projeto removido com sucesso!");
+      await fetchCandidatoData();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao remover projeto.");
+      throw err;
+    }
+  };
+
+  const saveCertificacao = async (data: tCertificacao) => {
+    try {
+      const response = await fetch('/api/curriculo/certificacoes', {
+        method: data.id ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) throw new Error((await response.json()).error || "Falha ao salvar certificação.");
+      toast.success("Certificação salva com sucesso!");
+      await fetchCandidatoData();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao salvar certificação.");
+      throw err;
+    }
+  };
+
+  const deleteCertificacao = async (id: string) => {
+    try {
+      const response = await fetch(`/api/curriculo/certificacoes`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      if (!response.ok) throw new Error((await response.json()).error || "Falha ao remover certificação.");
+      toast.success("Certificação removida com sucesso!");
+      await fetchCandidatoData();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao remover certificação.");
+      throw err;
+    }
+  };
+
 
   return (
     <CandidatoContext.Provider value={{ 
@@ -163,7 +304,15 @@ export const CandidatoProvider = ({ children }: { children: ReactNode }) => {
         saveExperiencia,
         deleteExperiencia,
         saveFormacao,
-        deleteFormacao
+        deleteFormacao,
+        saveHabilidade,
+        deleteHabilidade,
+        saveIdioma,
+        deleteIdioma,
+        saveProjeto,
+        deleteProjeto,
+        saveCertificacao,
+        deleteCertificacao
     }}>
       {children}
     </CandidatoContext.Provider>
