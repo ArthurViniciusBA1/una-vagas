@@ -1,5 +1,6 @@
-import { prisma } from "../lib/prisma"; 
 import { Usuario } from "@prisma/client"; 
+
+import { prisma } from "../lib/prisma"; 
 
 /**
  * Procura um usuário no banco de dados pelo ID.

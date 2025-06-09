@@ -1,7 +1,7 @@
-import { redirect } from 'next/navigation';
-import { cookies, headers } from 'next/headers';
-import jwt, { JwtPayload } from 'jsonwebtoken';
 import { RoleUsuario } from '@prisma/client'; 
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import { cookies, headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 interface TokenPayload extends JwtPayload {
   id: string;

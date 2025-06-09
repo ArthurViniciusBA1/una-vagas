@@ -1,9 +1,10 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
+import { Certificacao,ExperienciaProfissional, FormacaoAcademica, Habilidade, Idioma, Projeto, RoleUsuario } from '@prisma/client';
+import React, { createContext, ReactNode, useCallback, useContext, useEffect,useState } from 'react';
 import { toast } from 'sonner';
-import { RoleUsuario, ExperienciaProfissional, FormacaoAcademica, Habilidade, Idioma, Projeto, Certificacao } from '@prisma/client';
-import { tCurriculoInformacoesPessoais, tExperienciaProfissional, tFormacaoAcademica, tHabilidade, tIdioma, tProjeto, tCertificacao } from '@/schemas/curriculoSchema';
+
+import { tCertificacao,tCurriculoInformacoesPessoais, tExperienciaProfissional, tFormacaoAcademica, tHabilidade, tIdioma, tProjeto } from '@/schemas/curriculoSchema';
 
 interface CandidatoProfileData {
   id: string;

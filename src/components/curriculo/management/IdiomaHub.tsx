@@ -1,13 +1,15 @@
 "use client";
 
-import React, { useState } from 'react';
-import { useCandidato } from '@/context/CandidatoContext';
 import { Idioma } from '@prisma/client';
+import { Pencil, PlusCircle, Trash2 } from 'lucide-react';
+import React, { useState } from 'react';
+
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Pencil, Trash2 } from 'lucide-react';
+import { useCandidato } from '@/context/CandidatoContext';
+
 import { IdiomaForm } from '../forms/IdiomaForm';
 
-export function IdiomaHub({ setModalOpen }: { setModalOpen: (isOpen: boolean) => void }) {
+export function IdiomaHub({ }: { setModalOpen: (isOpen: boolean) => void }) {
   const { curriculo, deleteIdioma } = useCandidato();
   const [idiomaParaEditar, setIdiomaParaEditar] = useState<Idioma | null>(null);
   const [showForm, setShowForm] = useState(false);

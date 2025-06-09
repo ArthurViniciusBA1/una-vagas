@@ -1,11 +1,12 @@
 "use client";
 
-import { useRouter } from 'next/navigation';
-import { Button, buttonVariants } from '@/components/ui/button';
 import type { VariantProps } from "class-variance-authority";
 import { LogOut } from 'lucide-react';
-import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 import React from 'react';
+import { toast } from 'sonner';
+
+import { Button, buttonVariants } from '@/components/ui/button';
 
 interface LogoutButtonProps 
   extends React.ComponentProps<"button">,

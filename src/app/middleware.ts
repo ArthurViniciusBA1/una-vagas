@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 interface TokenPayload extends JwtPayload {
   id: string;
@@ -41,6 +41,7 @@ export async function middleware(request: NextRequest) {
               return NextResponse.redirect(new URL('/candidato/dashboard', request.url));
           }
         }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         console.warn("Middleware: Token inválido encontrado.");
       }

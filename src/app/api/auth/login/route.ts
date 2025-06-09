@@ -1,17 +1,17 @@
-import { NextResponse } from "next/server";
+import { RoleUsuario,Usuario } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import { gerarToken } from "@/helpers/jwt";
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
+
+import { gerarToken } from "@/helpers/jwt";
+import { prisma } from "@/lib/prisma";
 import { 
+  loginAdminSchema, 
   loginCandidatoSchema, 
   loginEmpresaSchema, 
-  loginAdminSchema, 
+  tLoginAdmin, 
   tLoginCandidato, 
-  tLoginEmpresa, 
-  tLoginAdmin 
-} from "@/schemas/usuarioSchema";
-import { prisma } from "@/lib/prisma";
-import { Usuario, RoleUsuario } from "@prisma/client";
+  tLoginEmpresa} from "@/schemas/usuarioSchema";
 
 interface TokenPayload {
   id: string;

@@ -1,22 +1,22 @@
 "use client";
 
+import { Eye, EyeOff } from "lucide-react";
 import * as React from "react";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { Eye, EyeOff } from "lucide-react";
 
 interface FloatingLabelInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   id: string;
-  showPasswordToggle?: boolean;
 }
 
 const FloatingLabelInput = React.forwardRef<
   HTMLInputElement,
   FloatingLabelInputProps
->(({ className, label, id, type, placeholder, value, showPasswordToggle, ...props }, ref) => {
+>(({ className, label, id, type, placeholder, value, ...props }, ref) => {
   const internalPlaceholder = placeholder === undefined ? " " : placeholder;
   const [isPasswordVisible, setIsPasswordVisible] = React.useState(false);
 

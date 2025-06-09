@@ -11,7 +11,8 @@ export function gerarToken(payload: object, expiresIn = tokenDuration) {
 export function validarToken(token: string) {
   try {
     return jwt.verify(token, JWT_SECRET);
-  } catch (error) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (e) {
     return null;
   }
 }

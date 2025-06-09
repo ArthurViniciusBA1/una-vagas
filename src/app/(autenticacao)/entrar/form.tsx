@@ -1,13 +1,13 @@
 "use client";
 
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
 import { FloatingLabelInput } from "@/components/custom/FloatingLabelInput";
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { loginCandidatoSchema, tLoginCandidato } from "@/schemas/usuarioSchema";
 
 export default function FormLoginCandidato() {
@@ -82,7 +82,6 @@ export default function FormLoginCandidato() {
                   label="Senha"
                   id="senhaCandidato"
                   type="password"
-                  showPasswordToggle={true}
                   autoComplete="current-password"
                   {...field}
                 />

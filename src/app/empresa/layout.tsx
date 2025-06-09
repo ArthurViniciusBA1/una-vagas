@@ -1,7 +1,7 @@
-import { redirect } from 'next/navigation';
-import { cookies, headers } from 'next/headers';
-import jwt, { JwtPayload } from 'jsonwebtoken';
 import { RoleUsuario } from '@prisma/client';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import { cookies, headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 interface TokenPayload extends JwtPayload {
   id: string;
@@ -26,7 +26,6 @@ export default async function EmpresaLayout({ children }: EmpresaLayoutProps) {
   }
 
   let isAuthenticatedAsEmpresaUser = false;
-  let empresaUserData: TokenPayload | null = null;
 
   if (token) {
     try {
@@ -37,7 +36,6 @@ export default async function EmpresaLayout({ children }: EmpresaLayoutProps) {
           console.warn(`EmpresaLayout: Recrutador ${decodedToken.id} sem empresaId no token. Acesso negado.`);
         } else {
           isAuthenticatedAsEmpresaUser = true;
-          empresaUserData = decodedToken;
         }
       } else {
         console.warn(`EmpresaLayout: Tentativa de acesso por usuário com role '${decodedToken?.role}'.`);

@@ -1,5 +1,6 @@
 import { Briefcase, CornerUpLeft } from "lucide-react";
 import Link from "next/link";
+
 import FormLoginEmpresa from "./form"; 
 
 export default function PaginaLoginEmpresa() {

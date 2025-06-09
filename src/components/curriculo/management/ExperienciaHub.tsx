@@ -1,13 +1,15 @@
 "use client";
 
-import React, { useState } from 'react';
-import { useCandidato } from '@/context/CandidatoContext';
 import { ExperienciaProfissional } from '@prisma/client';
+import { ArrowLeft,Pencil, PlusCircle, Trash2 } from 'lucide-react';
+import React, { useState } from 'react';
+
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Pencil, Trash2, ArrowLeft } from 'lucide-react';
+import { useCandidato } from '@/context/CandidatoContext';
+
 import { ExperienciaProfissionalForm } from '../forms/ExperienciaProfissionalForm';
 
-export function ExperienciaHub({ setModalOpen }: { setModalOpen: (isOpen: boolean) => void }) {
+export function ExperienciaHub({ }: { setModalOpen: (isOpen: boolean) => void }) {
   const { curriculo, deleteExperiencia } = useCandidato();
   const [view, setView] = useState<'list' | 'form'>('list');
   const [experienciaParaEditar, setExperienciaParaEditar] = useState<ExperienciaProfissional | null>(null);

@@ -1,20 +1,20 @@
 "use client";
 
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormControl,
-  FormMessage,
-} from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { cadastroSchema, tCadastro } from "@/schemas/usuarioSchema";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { FloatingLabelInput } from "@/components/custom/FloatingLabelInput";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { cadastroSchema, tCadastro } from "@/schemas/usuarioSchema";
 
 export default function RegistroForm() {
   const form = useForm<tCadastro>({

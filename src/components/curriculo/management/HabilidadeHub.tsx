@@ -1,13 +1,15 @@
 "use client";
 
-import React, { useState } from 'react';
-import { useCandidato } from '@/context/CandidatoContext';
 import { Habilidade } from '@prisma/client';
+import { Pencil, PlusCircle, Trash2 } from 'lucide-react';
+import React, { useState } from 'react';
+
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Pencil, Trash2 } from 'lucide-react';
+import { useCandidato } from '@/context/CandidatoContext';
+
 import { HabilidadeForm } from '../forms/HabilidadeForm';
 
-export function HabilidadeHub({ setModalOpen }: { setModalOpen: (isOpen: boolean) => void }) {
+export function HabilidadeHub({ }: { setModalOpen: (isOpen: boolean) => void }) {
   const { curriculo, deleteHabilidade } = useCandidato();
   const [habilidadeParaEditar, setHabilidadeParaEditar] = useState<Habilidade | null>(null);
   const [showForm, setShowForm] = useState(false);

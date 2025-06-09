@@ -1,22 +1,22 @@
 "use client";
 
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import { 
-  Edit3, 
-  UserCircle2, 
-  Briefcase, 
-  FileText, 
-  Star, 
   Award, 
+  Briefcase, 
+  Edit3, 
+  EyeIcon,
+  FileText, 
   Languages, 
   Lightbulb,
-  EyeIcon,
-  Loader2 
-} from 'lucide-react';
+  Loader2, 
+  Star, 
+  UserCircle2} from 'lucide-react';
+import Link from 'next/link';
 import React, { useState } from 'react';
-import { useCandidato } from '@/context/CandidatoContext';
+
 import { DashboardModalsManager } from '@/components/curriculo/DashboardModalsManager';
+import { Button } from '@/components/ui/button';
+import { useCandidato } from '@/context/CandidatoContext';
 
 type ActiveModalType = 'infoPessoal' | 'experiencia' | 'formacao' | 'habilidades' | 'idiomas' | 'projetos' | 'certificacoes' | null;
 
@@ -70,7 +70,7 @@ export default function CandidatoDashboardPage() {
         {!curriculo?.id && ( 
           <div className="mb-6 p-4 bg-blue-50 border border-blue-200 text-blue-700 rounded-md">
             <p className="font-medium">Parece que você ainda não iniciou seu currículo.</p>
-            <p className="text-sm">Clique em "Informações Pessoais" para começar a preencher!</p>
+            <p className="text-sm">Clique em &quot;Informações Pessoais&quot; para começar a preencher!</p>
           </div>
         )}
         {curriculo?.id && curriculo.titulo && (

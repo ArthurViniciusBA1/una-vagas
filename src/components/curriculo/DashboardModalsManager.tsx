@@ -1,14 +1,16 @@
 "use client";
 
 import React from 'react';
-import { CurriculoSecaoModal } from '@/components/curriculo/modals/CurriculoSecaoModal';
+
 import { InformacoesPessoaisForm } from '@/components/curriculo/forms/InformacoesPessoaisForm';
+import { CurriculoSecaoModal } from '@/components/curriculo/modals/CurriculoSecaoModal';
+
+import { CertificacaoHub } from './management/CertificacaoHub';
 import { ExperienciaHub } from './management/ExperienciaHub';
 import { FormacaoHub } from './management/FormacaoHub';
 import { HabilidadeHub } from './management/HabilidadeHub';
 import { IdiomaHub } from './management/IdiomaHub';
 import { ProjetoHub } from './management/ProjetoHub';
-import { CertificacaoHub } from './management/CertificacaoHub';
 
 type ActiveModalType = 'infoPessoal' | 'experiencia' | 'formacao' | 'habilidades' | 'idiomas' | 'projetos' | 'certificacoes' | null;
 

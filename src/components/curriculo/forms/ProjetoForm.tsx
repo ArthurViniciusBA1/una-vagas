@@ -1,16 +1,17 @@
 "use client";
 
-import React, { useEffect } from 'react';
-import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCandidato } from '@/context/CandidatoContext';
-import { projetoSchema, tProjeto } from "@/schemas/curriculoSchema";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import { DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Loader2 } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { SubmitHandler,useForm } from "react-hook-form";
+
 import { FloatingLabelInput } from "@/components/custom/FloatingLabelInput";
 import { FloatingLabelTextarea } from '@/components/custom/FloatingLabelTextarea';
-import { Loader2 } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { DialogClose,DialogFooter } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { useCandidato } from '@/context/CandidatoContext';
+import { projetoSchema, tProjeto } from "@/schemas/curriculoSchema";
 
 interface ProjetoFormProps {
   setModalOpen: (isOpen: boolean) => void;

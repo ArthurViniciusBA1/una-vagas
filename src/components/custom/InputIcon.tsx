@@ -1,13 +1,14 @@
 "use client";
 
+import { InputMask } from "@react-input/mask";
+import { Eye, EyeClosed } from "lucide-react";
 import {
+  forwardRef,
   InputHTMLAttributes,
   ReactNode,
   useState,
-  forwardRef,
 } from "react";
-import { InputMask } from "@react-input/mask";
-import { Eye, EyeClosed } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 
 interface InputIconProps extends InputHTMLAttributes<HTMLInputElement> {

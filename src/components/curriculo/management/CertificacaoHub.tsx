@@ -1,14 +1,16 @@
 "use client";
 
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { useCandidato } from '@/context/CandidatoContext';
 import { Certificacao } from '@prisma/client';
+import { Link as LinkIcon,Pencil, PlusCircle, Trash2 } from 'lucide-react';
+import Link from 'next/link';
+import React, { useState } from 'react';
+
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Pencil, Trash2, Link as LinkIcon } from 'lucide-react';
+import { useCandidato } from '@/context/CandidatoContext';
+
 import { CertificacaoForm } from '../forms/CertificacaoForm';
 
-export function CertificacaoHub({ setModalOpen }: { setModalOpen: (isOpen: boolean) => void }) {
+export function CertificacaoHub({ }: { setModalOpen: (isOpen: boolean) => void }) {
   const { curriculo, deleteCertificacao } = useCandidato();
   const [certificacaoParaEditar, setCertificacaoParaEditar] = useState<Certificacao | null>(null);
   const [showForm, setShowForm] = useState(false);

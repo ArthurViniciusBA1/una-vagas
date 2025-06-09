@@ -1,19 +1,20 @@
 "use client";
 
-import React, { useEffect } from 'react';
-import { useCandidato } from '@/context/CandidatoContext';
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { useForm } from "react-hook-form";
+
+import { FloatingLabelInput } from "@/components/custom/FloatingLabelInput";
+import { FloatingLabelTextarea } from '@/components/custom/FloatingLabelTextarea';
+import { Button } from "@/components/ui/button";
+import { DialogClose,DialogFooter } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { useCandidato } from '@/context/CandidatoContext';
 import { 
   curriculoInformacoesPessoaisSchema, 
   tCurriculoInformacoesPessoais 
 } from "@/schemas/curriculoSchema";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import { DialogFooter, DialogClose } from "@/components/ui/dialog";
-import { FloatingLabelInput } from "@/components/custom/FloatingLabelInput";
-import { FloatingLabelTextarea } from '@/components/custom/FloatingLabelTextarea';
-import { Loader2 } from 'lucide-react';
 
 interface InformacoesPessoaisFormProps {
   setModalOpen: (isOpen: boolean) => void;
@@ -49,7 +50,7 @@ export function InformacoesPessoaisForm({ setModalOpen }: InformacoesPessoaisFor
         portfolioUrl: curriculo.portfolioUrl ?? "",
       });
     }
-  }, [curriculo, form.reset]);
+  }, [curriculo, form, form.reset]);
 
   const onSubmit = async (data: tCurriculoInformacoesPessoais) => {
     try {

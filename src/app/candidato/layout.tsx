@@ -1,11 +1,12 @@
-import { redirect } from 'next/navigation';
-import { cookies, headers } from 'next/headers';
-import jwt, { JwtPayload } from 'jsonwebtoken';
 import { RoleUsuario } from '@prisma/client';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import { Briefcase, FileText, LayoutDashboard, Send } from 'lucide-react';
+import { cookies, headers } from 'next/headers';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
+
 import { LogoutButton } from '@/components/auth/LogoutButton';
 import { Button } from '@/components/ui/button';
-import { LayoutDashboard, FileText, Briefcase, Send } from 'lucide-react';
 import { CandidatoProvider } from '@/context/CandidatoContext';
 
 interface TokenPayload extends JwtPayload {

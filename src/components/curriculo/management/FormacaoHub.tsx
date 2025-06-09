@@ -1,13 +1,15 @@
 "use client";
 
-import React, { useState } from 'react';
-import { useCandidato } from '@/context/CandidatoContext';
 import { FormacaoAcademica } from '@prisma/client';
+import { ArrowLeft,Pencil, PlusCircle, Trash2 } from 'lucide-react';
+import React, { useState } from 'react';
+
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Pencil, Trash2, ArrowLeft } from 'lucide-react';
+import { useCandidato } from '@/context/CandidatoContext';
+
 import { FormacaoAcademicaForm } from '../forms/FormacaoAcademicaForm';
 
-export function FormacaoHub({ setModalOpen }: { setModalOpen: (isOpen: boolean) => void }) {
+export function FormacaoHub({ }: { setModalOpen: (isOpen: boolean) => void }) {
   const { curriculo, deleteFormacao } = useCandidato();
   const [view, setView] = useState<'list' | 'form'>('list');
   const [formacaoParaEditar, setFormacaoParaEditar] = useState<FormacaoAcademica | null>(null);

@@ -1,6 +1,8 @@
-import Footer from "@/components/footer";
 import { CornerUpLeft, ShieldAlert } from "lucide-react";
 import Link from "next/link";
+
+import Footer from "@/components/footer";
+
 import FormLoginAdmin from "./form";
 
 export default function PaginaLoginAdmin() {

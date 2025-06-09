@@ -1,5 +1,5 @@
-import { z } from "zod";
 import { NivelProficiencia, TipoVaga } from "@prisma/client";
+import { z } from "zod";
 
 export const curriculoInformacoesPessoaisSchema = z.object({
   titulo: z.string().min(1, "Título do currículo é obrigatório.").max(100, "O título é muito longo."),

@@ -1,9 +1,10 @@
-import { NextResponse } from "next/server";
-import { cadastroSchema } from "@/schemas/usuarioSchema";
 import bcrypt from "bcryptjs";
-import { prisma } from "@/lib/prisma";
-import { gerarToken } from "@/helpers/jwt";
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
+
+import { gerarToken } from "@/helpers/jwt";
+import { prisma } from "@/lib/prisma";
+import { cadastroSchema } from "@/schemas/usuarioSchema";
 
 
 export async function POST(request: Request) {

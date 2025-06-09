@@ -1,14 +1,16 @@
 "use client";
 
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { useCandidato } from '@/context/CandidatoContext';
 import { Projeto } from '@prisma/client';
+import { Github,Link as LinkIcon, Pencil, PlusCircle, Trash2 } from 'lucide-react';
+import Link from 'next/link';
+import React, { useState } from 'react';
+
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Pencil, Trash2, Link as LinkIcon, Github } from 'lucide-react';
+import { useCandidato } from '@/context/CandidatoContext';
+
 import { ProjetoForm } from '../forms/ProjetoForm';
 
-export function ProjetoHub({ setModalOpen }: { setModalOpen: (isOpen: boolean) => void }) {
+export function ProjetoHub({ }: { setModalOpen: (isOpen: boolean) => void }) {
   const { curriculo, deleteProjeto } = useCandidato();
   const [projetoParaEditar, setProjetoParaEditar] = useState<Projeto | null>(null);
   const [showForm, setShowForm] = useState(false);

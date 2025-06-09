@@ -1,22 +1,23 @@
 "use client";
 
-import React, { useEffect } from 'react';
-import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCandidato } from '@/context/CandidatoContext';
-import { experienciaProfissionalSchema, tExperienciaProfissional } from "@/schemas/curriculoSchema";
-import { Form, FormControl, FormField, FormItem, FormMessage, FormLabel } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import { DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Loader2 } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { SubmitHandler,useForm } from "react-hook-form";
+
 import { FloatingLabelInput } from "@/components/custom/FloatingLabelInput";
 import { FloatingLabelTextarea } from '@/components/custom/FloatingLabelTextarea';
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2 } from 'lucide-react';
-import { ExperienciaProfissional } from '@prisma/client';
+import { DialogClose,DialogFooter } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel,FormMessage } from "@/components/ui/form";
+import { useCandidato } from '@/context/CandidatoContext';
+import { experienciaProfissionalSchema, tExperienciaProfissional } from "@/schemas/curriculoSchema";
 
 interface ExperienciaProfissionalFormProps {
   setModalOpen: (isOpen: boolean) => void;
-  dadosIniciais?: ExperienciaProfissional | null;
+  // A prop agora espera os dados no mesmo formato do schema do formulário
+  dadosIniciais?: Partial<tExperienciaProfissional> | null;
 }
 
 const defaultFormValues: tExperienciaProfissional = {
@@ -41,16 +42,11 @@ export function ExperienciaProfissionalForm({ setModalOpen, dadosIniciais }: Exp
 
   const trabalhoAtual = watch("trabalhoAtual");
 
+  // O useEffect agora fica muito mais simples!
+  // Ele só precisa popular o formulário, pois os dados já vêm formatados.
   useEffect(() => {
     if (dadosIniciais) {
-      const formValues = {
-        ...dadosIniciais,
-        localidade: dadosIniciais.local ?? "",
-        dataInicio: new Date(dadosIniciais.dataInicio).toISOString().substring(0, 7),
-        dataFim: dadosIniciais.dataFim ? new Date(dadosIniciais.dataFim).toISOString().substring(0, 7) : "",
-        descricao: dadosIniciais.descricao ?? "",
-      };
-      reset(formValues);
+      reset(dadosIniciais);
     } else {
       reset(defaultFormValues);
     }
@@ -58,7 +54,8 @@ export function ExperienciaProfissionalForm({ setModalOpen, dadosIniciais }: Exp
 
   const onSubmit: SubmitHandler<tExperienciaProfissional> = async (data) => {
     try {
-      await saveExperiencia(data);
+      const payload = data.trabalhoAtual ? { ...data, dataFim: '' } : data;
+      await saveExperiencia(payload);
       setModalOpen(false); 
     } catch (error) {
       console.error("Falha ao submeter o formulário de experiência:", error);
@@ -86,7 +83,7 @@ export function ExperienciaProfissionalForm({ setModalOpen, dadosIniciais }: Exp
           )}/>
         </div>
         <FormField control={control} name="trabalhoAtual" render={({ field }) => (
-            <FormItem className="flex flex-row items-center space-x-3 space-y-0 p-3 h-1">
+            <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-3 shadow-sm h-10">
               <FormControl><Checkbox id="trabalhoAtualExp" checked={field.value} onCheckedChange={field.onChange} /></FormControl>
               <FormLabel htmlFor="trabalhoAtualExp" className="cursor-pointer">Trabalho Atual</FormLabel>
             </FormItem>

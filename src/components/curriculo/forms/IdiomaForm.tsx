@@ -1,17 +1,18 @@
 "use client";
 
-import React, { useEffect } from 'react';
-import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { NivelProficiencia } from '@prisma/client';
+import { Loader2 } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { SubmitHandler,useForm } from "react-hook-form";
+
+import { FloatingLabelInput } from "@/components/custom/FloatingLabelInput";
+import { Button } from "@/components/ui/button";
+import { DialogClose,DialogFooter } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel,FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCandidato } from '@/context/CandidatoContext';
 import { idiomaSchema, tIdioma } from "@/schemas/curriculoSchema";
-import { Form, FormControl, FormField, FormItem, FormMessage, FormLabel } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import { DialogFooter, DialogClose } from "@/components/ui/dialog";
-import { FloatingLabelInput } from "@/components/custom/FloatingLabelInput";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2 } from 'lucide-react';
-import { NivelProficiencia } from '@prisma/client';
 
 interface IdiomaFormProps {
   setModalOpen: (isOpen: boolean) => void;

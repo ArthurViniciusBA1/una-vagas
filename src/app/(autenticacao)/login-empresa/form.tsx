@@ -1,13 +1,13 @@
 "use client";
 
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
 import { FloatingLabelInput } from "@/components/custom/FloatingLabelInput";
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { loginEmpresaSchema, tLoginEmpresa } from "@/schemas/usuarioSchema";
 export default function FormLoginEmpresa() {
   const router = useRouter();
@@ -80,7 +80,6 @@ export default function FormLoginEmpresa() {
                   label="Senha"
                   id="senhaEmpresa"
                   type="password"
-                  showPasswordToggle={true}
                   autoComplete="current-password"
                   {...field}
                 />

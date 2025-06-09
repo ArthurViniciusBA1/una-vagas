@@ -1,8 +1,9 @@
-import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import { prisma } from '@/lib/prisma';
 import { RoleUsuario } from '@prisma/client';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import { cookies } from 'next/headers';
+import { NextResponse } from 'next/server';
+
+import { prisma } from '@/lib/prisma';
 
 interface TokenPayload extends JwtPayload {
   id: string;
