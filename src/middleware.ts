@@ -1,4 +1,5 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import { cookies } from 'next/headers';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
@@ -29,13 +30,16 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const token = request.cookies.get('token')?.value;
+  const cookieStore = await cookies()
+  const token = cookieStore.get('token')?.value
 
   if (token) {
     const jwtSecret = process.env.JWT_SECRET;
     if (jwtSecret) {
       try {
         const decodedToken = jwt.verify(token, jwtSecret) as TokenPayload;
+        console.log(decodedToken);
+        
         if (isCurrentRouteAnAuthPage) {
           console.log(
             `Middleware: Usuário autenticado (Role: ${decodedToken.role}) em página de autenticação (${pathname}). Redirecionando...`

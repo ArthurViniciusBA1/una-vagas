@@ -113,3 +113,15 @@ export const vagaSchema = z.object({
   ativa: z.boolean().default(true),
 });
 export type tVaga = z.infer<typeof vagaSchema>;
+
+// Schema para o currículo completo, unindo todos os outros
+export const curriculoCompletoSchema = curriculoInformacoesPessoaisSchema.extend({
+  experienciasProfissionais: z.array(experienciaProfissionalSchema).optional(),
+  formacoesAcademicas: z.array(formacaoAcademicaSchema).optional(),
+  habilidades: z.array(habilidadeSchema).optional(),
+  idiomas: z.array(idiomaSchema).optional(),
+  projetos: z.array(projetoSchema).optional(),
+  certificacoes: z.array(certificacaoSchema).optional(),
+});
+
+export type tCurriculoCompleto = z.infer<typeof curriculoCompletoSchema>;
