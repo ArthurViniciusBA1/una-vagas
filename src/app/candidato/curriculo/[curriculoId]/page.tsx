@@ -66,11 +66,12 @@ export default async function PaginaVisualizacaoCurriculo({
   params,
   searchParams,
 }: {
-  params: { curriculoId: string };
-  searchParams: { edit?: string };
+  params: Promise<{ curriculoId: string }>;
+  searchParams: Promise<{ edit?: string }>;
 }) {
-  const { curriculoId } = params;
-  const isEditMode = searchParams.edit === 'true';
+  const { curriculoId } = await params;
+  const resolvedSearchParams = await searchParams;
+  const isEditMode = resolvedSearchParams.edit === 'true';
 
   const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value;

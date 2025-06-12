@@ -33,7 +33,7 @@ enum NivelProficiencia {
 
 enum TipoVaga {
   ESTAGIO
-  EFETIVO_JR
+  EFETIVO
   TRAINEE
   TEMPORARIO
   PROJETO
@@ -185,7 +185,6 @@ model Certificacao {
   nome                String
   organizacaoEmissora String
   dataEmissao         DateTime
-  dataExpiracao       DateTime?
   credencialId        String?
   credencialUrl       String?
   curriculoId         String

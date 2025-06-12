@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang='pt-br'>
       <body className={`${monstserrat.variable} antialiased`}>
-        <Toaster richColors position='top-right' duration={5000} />
+        <Toaster richColors position='top-right' duration={4000} />
         {children}
       </body>
     </html>

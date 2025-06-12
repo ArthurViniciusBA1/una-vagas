@@ -128,13 +128,11 @@ export default function CandidatoDashboardPage() {
               </div>
             </Button>
           ))}
-        </div>
-        <div className='mt-6 flex flex-wrap gap-4'>
           {curriculo?.id && (
-            <Button asChild variant='outline'>
+            <Button asChild variant='outline' className='justify-start h-auto py-3 text-left group'>
               <Link href={`/candidato/curriculo/${curriculo.id}`}>
-                <EyeIcon size={18} className='mr-2' />
-                Visualizar/editar meu curriculo
+                <EyeIcon size={18} className='mr-3 text-primary group-hover:text-accent-foreground shrink-0' />
+                Visualizar currículo completo
               </Link>
             </Button>
           )}

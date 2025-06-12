@@ -9,7 +9,7 @@ import {
   ProjetoSchema as generatedProjetoSchema,
   CertificacaoSchema as generatedCertificacaoSchema,
   VagaSchema as generatedVagaSchema,
-} from './generated/prisma';
+} from './generated';
 
 // --- SCHEMAS DE FORMULÁRIO ---
 
@@ -159,12 +159,12 @@ export const certificacaoSchema = z.object({
     .transform((str) => {
       return str; // A transformação real para Date ocorrerá na action
     }),
-  // CORREÇÃO: dataExpiracao também como string opcional
-  dataExpiracao: z
-    .string()
-    .regex(/^\d{4}-\d{2}$/, 'Formato de data inválido (YYYY-MM).')
-    .optional()
-    .or(z.literal('')), // Permite string vazia
+  // REMOVA A LINHA ABAIXO
+  // dataExpiracao: z
+  //   .string()
+  //   .regex(/^\d{4}-\d{2}$/, 'Formato de data inválido (YYYY-MM).')
+  //   .optional()
+  //   .or(z.literal('')), // Permite string vazia
   credencialId: z.string().optional().or(z.literal('')),
   credencialUrl: z.string().url({ message: 'URL da credencial inválida.' }).optional().or(z.literal('')),
 });

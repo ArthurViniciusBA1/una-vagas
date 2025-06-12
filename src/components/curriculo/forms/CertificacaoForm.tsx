@@ -26,6 +26,7 @@ const defaultFormValues: tCertificacao = {
   organizacaoEmissora: '',
   dataEmissao: '',
   credencialUrl: '',
+  credencialId: '',
 };
 
 export function CertificacaoForm({ setModalOpen, dadosIniciais }: CertificacaoFormProps) {
@@ -44,9 +45,8 @@ export function CertificacaoForm({ setModalOpen, dadosIniciais }: CertificacaoFo
         nome: dadosIniciais.nome,
         organizacaoEmissora: dadosIniciais.organizacaoEmissora,
         dataEmissao: new Date(dadosIniciais.dataEmissao).toISOString().substring(0, 7),
-        credencialUrl: dadosIniciais.credencialUrl ?? '',
         credencialId: dadosIniciais.credencialId ?? '',
-        dataExpiracao: dadosIniciais.dataExpiracao ? new Date(dadosIniciais.dataExpiracao).toISOString().substring(0, 7) : '',
+        credencialUrl: dadosIniciais.credencialUrl ?? '',
       };
       reset(valoresParaFormulario);
     } else {
@@ -124,6 +124,27 @@ export function CertificacaoForm({ setModalOpen, dadosIniciais }: CertificacaoFo
             </FormItem>
           )}
         />
+        {/* REMOVA O BLOCO ABAIXO (FormField para dataExpiracao) */}
+        {/*
+        <FormField
+          control={control}
+          name='dataExpiracao'
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <FloatingLabelInput
+                  label='Data de Expiração (Opcional)'
+                  id='dataExpiracaoCertificado'
+                  type='month'
+                  {...field}
+                  value={field.value ?? ''}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        */}
         <FormField
           control={control}
           name='credencialUrl'

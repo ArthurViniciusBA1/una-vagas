@@ -6,19 +6,20 @@ import React, { createContext, useCallback, useContext, useEffect, useState } fr
 import { toast } from 'sonner';
 
 import {
-  saveExperienciaAction, // Importação da Server Action
-  deleteExperienciaAction, // Importação da Server Action
-  saveFormacaoAction, // Importação da Server Action
-  deleteFormacaoAction, // Importação da Server Action
-  saveHabilidadeAction, // Importação da Server Action
-  deleteHabilidadeAction, // Importação da Server Action
-  saveIdiomaAction, // Importação da Server Action
-  deleteIdiomaAction, // Importação da Server Action
-  saveProjetoAction, // Importação da Server Action
-  deleteProjetoAction, // Importação da Server Action
-  saveCertificacaoAction, // Importação da Server Action
-  deleteCertificacaoAction, // Importação da Server Action
-} from '@/actions/curriculoParcialActions';
+  saveExperienciaAction,
+  deleteExperienciaAction,
+  saveFormacaoAction,
+  deleteFormacaoAction,
+  saveHabilidadeAction,
+  deleteHabilidadeAction,
+  saveIdiomaAction,
+  deleteIdiomaAction,
+  saveProjetoAction,
+  deleteProjetoAction,
+  saveCertificacaoAction,
+  deleteCertificacaoAction,
+  saveInformacoesPessoaisAction, // Importe a Server Action
+} from '@/actions/curriculoParcialActions'; //
 import {
   tCertificacao,
   tCurriculoInformacoesPessoais,
@@ -42,7 +43,6 @@ const curriculoCompletoArgs = Prisma.validator<Prisma.CurriculoDefaultArgs>()({
 });
 
 export type CurriculoCompleto = Prisma.CurriculoGetPayload<typeof curriculoCompletoArgs>;
-
 
 interface CandidatoProfileData {
   id: string;
@@ -106,25 +106,24 @@ export const CandidatoProvider = ({ children }: { children: React.ReactNode }) =
 
   // Adaptação da função para usar Server Action
   const updateInformacoesPessoais = async (data: tCurriculoInformacoesPessoais) => {
-    try {
-      // Como não temos uma Server Action específica para Informacoes Pessoais ainda no curriculoParcialActions,
-      // manteremos a chamada à API por enquanto. A Server Action `save*Action` é para as outras entidades.
-      // Se você criar uma Server Action para 'InformacoesPessoais', ela seria chamada aqui.
-      const response = await fetch('/api/curriculo/informacoes-pessoais', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) throw new Error((await response.json()).error);
-      toast.success('Informações pessoais salvas com sucesso!');
-      await fetchCandidatoData();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Erro ao salvar.');
-      throw err;
-    }
+    // Usa toast.promise para exibir o feedback de sucesso/erro
+    toast.promise(saveInformacoesPessoaisAction(data), {
+      loading: 'Salvando informações pessoais...',
+      success: (res) => {
+        if (res.success) {
+          fetchCandidatoData(); // Atualiza os dados após o sucesso
+          return 'Informações pessoais salvas com sucesso!';
+        }
+        throw new Error(res.error || 'Erro ao salvar.');
+      },
+      error: (err) => {
+        console.error('Erro ao salvar informações pessoais:', err);
+        return err instanceof Error ? err.message : 'Erro ao salvar informações pessoais.';
+      },
+    });
   };
 
-  // Adaptação das funções para usar Server Actions
+  // As outras funções save/delete já estão usando as Server Actions
   const saveExperiencia = async (data: tExperienciaProfissional) => {
     const res = await saveExperienciaAction(data);
     if (!res.success) {

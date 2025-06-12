@@ -1,4 +1,3 @@
-// src/actions/curriculoParcialActions.ts
 'use server';
 
 import { revalidatePath } from 'next/cache';
@@ -19,15 +18,14 @@ import {
   tProjeto,
   certificacaoSchema,
   tCertificacao,
-  curriculoInformacoesPessoaisSchema, // Importe o schema
-  tCurriculoInformacoesPessoais, // Importe o tipo
+  curriculoInformacoesPessoaisSchema,
+  tCurriculoInformacoesPessoais,
 } from '@/schemas/curriculoSchema';
 
 interface TokenPayload {
   id: string;
 }
 
-// --- A "FÁBRICA" DE ACTIONS (Higher-Order Function) ---
 type ActionLogic<TInput, TOutput> = (input: TInput, userId: string) => Promise<TOutput>;
 
 async function createProtectedAction<TInput, TOutput>(schema: z.ZodSchema<TInput> | null, logic: ActionLogic<TInput, TOutput>) {
@@ -50,7 +48,7 @@ async function createProtectedAction<TInput, TOutput>(schema: z.ZodSchema<TInput
         if (!validation.success)
           return {
             success: false,
-            error: validation.error.errors.map((e) => e.message).join(', ') || 'Dados de entrada inválidos.', // Melhorar mensagem de erro
+            error: validation.error.errors.map((e) => e.message).join(', ') || 'Dados de entrada inválidos.',
           };
       }
 
@@ -62,7 +60,6 @@ async function createProtectedAction<TInput, TOutput>(schema: z.ZodSchema<TInput
       return { success: true, data: result };
     } catch (e) {
       console.error('Action Error:', e);
-      // Para erros de JWT, pode ser mais específico
       if (e instanceof jwt.JsonWebTokenError) {
         return { success: false, error: 'Token inválido ou expirado. Faça login novamente.' };
       }
@@ -74,7 +71,6 @@ async function createProtectedAction<TInput, TOutput>(schema: z.ZodSchema<TInput
   };
 }
 
-// --- FUNÇÃO AUXILIAR ---
 async function getCurriculoId(userId: string): Promise<string> {
   const curriculo = await prisma.curriculo.findUnique({
     where: { usuarioId: userId },
@@ -87,11 +83,8 @@ async function getCurriculoId(userId: string): Promise<string> {
   return novoCurriculo.id;
 }
 
-// --- DEFINIÇÃO DAS ACTIONS ---
-
 // Informações Pessoais (NOVA ACTION)
 const saveInformacoesPessoaisLogic: ActionLogic<tCurriculoInformacoesPessoais, any> = async (data, userId) => {
-  // Ajuste para campos opcionais vazios
   const dataToSave = {
     ...data,
     resumoProfissional: data.resumoProfissional || null,
@@ -198,11 +191,18 @@ export const deleteIdiomaAction = await createProtectedAction(z.string().min(1),
 // Projeto
 const saveProjetoLogic: ActionLogic<tProjeto, any> = async (data, userId) => {
   const { id, ...rest } = data;
+  const prismaData = {
+    ...rest,
+    projectUrl: rest.projectUrl || null,
+    repositorioUrl: rest.repositorioUrl || null,
+    dataInicio: rest.dataInicio ? new Date(rest.dataInicio) : null,
+    dataFim: rest.dataFim ? new Date(rest.dataFim) : null,
+  };
   const curriculoId = await getCurriculoId(userId);
   return prisma.projeto.upsert({
     where: { id: id || '' },
-    create: { ...rest, curriculoId },
-    update: rest,
+    create: { ...prismaData, curriculoId },
+    update: prismaData,
   });
 };
 const deleteProjetoLogic: ActionLogic<string, any> = (id, userId) =>
@@ -218,6 +218,10 @@ const saveCertificacaoLogic: ActionLogic<tCertificacao, any> = async (data, user
   const prismaData = {
     ...rest,
     dataEmissao: new Date(rest.dataEmissao),
+    // REMOVA OU COMENTE A LINHA ABAIXO
+    // dataExpiracao: rest.dataExpiracao ? new Date(rest.dataExpiracao) : null,
+    credencialId: rest.credencialId || null,
+    credencialUrl: rest.credencialUrl || null,
   };
 
   const curriculoId = await getCurriculoId(userId);

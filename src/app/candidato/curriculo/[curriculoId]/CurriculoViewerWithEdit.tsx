@@ -17,6 +17,7 @@ import {
   Star,
   User,
   Pencil,
+  Eye, // Mantenha, se os ícones forem usados em outras partes
 } from 'lucide-react';
 import Link from 'next/link';
 import { Prisma, RoleUsuario } from '@prisma/client';
@@ -30,10 +31,11 @@ import { IdiomaHub } from '@/components/curriculo/management/IdiomaHub';
 import { ProjetoHub } from '@/components/curriculo/management/ProjetoHub';
 import { CertificacaoHub } from '@/components/curriculo/management/CertificacaoHub';
 import { Button } from '@/components/ui/button';
-import { useCandidato } from '@/context/CandidatoContext'; // Precisamos do contexto para fetchCandidatoData
-import { FloatingEditButton } from '@/components/curriculo/FloatingEditButton'; // Importe o botão flutuante
+import { useCandidato } from '@/context/CandidatoContext';
 
-// Reutilizar a definição de tipo completa do currículo
+// Importe o novo wrapper de transição
+import { ModeTransitionWrapper } from '@/components/curriculo/ModeTransitionWrapper';
+
 const curriculoQueryArgs = Prisma.validator<Prisma.CurriculoDefaultArgs>()({
   include: {
     usuario: { select: { id: true, nome: true, email: true } },
@@ -62,7 +64,6 @@ function formatarData(data: Date | null | undefined): string {
   });
 }
 
-// Componente auxiliar para seções editáveis
 function CurriculoSecao({
   titulo,
   icon,
@@ -107,223 +108,228 @@ export default function CurriculoViewerWithEdit({ curriculo: initialCurriculo, i
 
   const handleCloseModal = () => {
     setActiveModal(null);
-    fetchCandidatoData(); // Refresca os dados do currículo após o fechamento do modal
+    fetchCandidatoData();
   };
 
   if (!currentCurriculo) {
     return <div className="text-center text-muted-foreground">Currículo não encontrado ou carregando...</div>;
   }
 
-  // Verifica se o usuário logado é o proprietário do currículo
   const isOwner = loggedInUserId === currentCurriculo.usuario.id;
 
   return (
-    <div className='max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6 sm:p-10 my-8'>
-      {/* Renderiza o botão flutuante APENAS se o usuário logado for o proprietário do currículo */}
-      {isOwner && (
-        <FloatingEditButton isEditMode={isEditMode} />
-      )}
-
-      <header className='flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10'>
-        <div>
-          <h1 className='text-4xl font-extrabold text-gray-800'>{currentCurriculo.usuario.nome}</h1>
-          <p className='text-xl text-primary font-medium mt-1'>{currentCurriculo.titulo}</p>
-        </div>
-        <div className='text-sm text-gray-600 flex flex-col items-start sm:items-end gap-1.5'>
-          {currentCurriculo.usuario.email && (
-            <span className='flex items-center gap-2'>
-              <Mail size={14} /> {currentCurriculo.usuario.email}
-            </span>
-          )}
-          {currentCurriculo.telefone && (
-            <span className='flex items-center gap-2'>
-              <Phone size={14} /> {currentCurriculo.telefone}
-            </span>
-          )}
-          {currentCurriculo.endereco && (
-            <span className='flex items-center gap-2'>
-              <MapPin size={14} /> {currentCurriculo.endereco}
-            </span>
-          )}
-          <div className='flex items-center gap-3 mt-2'>
-            {currentCurriculo.linkedinUrl && (
-              <Link href={currentCurriculo.linkedinUrl} target='_blank' rel='noopener noreferrer'>
-                <Linkedin className='text-blue-700' />
-              </Link>
-            )}
-            {currentCurriculo.githubUrl && (
-              <Link href={currentCurriculo.githubUrl} target='_blank' rel='noopener noreferrer'>
-                <Github className='text-gray-800' />
-              </Link>
-            )}
+    <ModeTransitionWrapper isEditMode={isEditMode} isOwner={isOwner}>
+      <div className='max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6 sm:p-10 my-8'>
+        <header className='flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10'>
+          <div>
+            <h1 className='text-4xl font-extrabold text-gray-800'>{currentCurriculo.usuario.nome}</h1>
+            <p className='text-xl text-primary font-medium mt-1'>{currentCurriculo.titulo}</p>
           </div>
-        </div>
-      </header>
+          <div className='text-sm text-gray-600 flex flex-col items-start sm:items-end gap-1.5'>
+            {currentCurriculo.usuario.email && (
+              <span className='flex items-center gap-2'>
+                <Mail size={14} /> {currentCurriculo.usuario.email}
+              </span>
+            )}
+            {currentCurriculo.telefone && (
+              <span className='flex items-center gap-2'>
+                <Phone size={14} /> {currentCurriculo.telefone}
+              </span>
+            )}
+            {currentCurriculo.endereco && (
+              <span className='flex items-center gap-2'>
+                <MapPin size={14} /> {currentCurriculo.endereco}
+              </span>
+            )}
+            <div className='flex items-center gap-3 mt-2'>
+              {currentCurriculo.linkedinUrl && (
+                <Link href={currentCurriculo.linkedinUrl} target='_blank' rel='noopener noreferrer'>
+                  <Linkedin className='text-blue-700' />
+                </Link>
+              )}
+              {currentCurriculo.githubUrl && (
+                <Link href={currentCurriculo.githubUrl} target='_blank' rel='noopener noreferrer'>
+                  <Github className='text-gray-800' />
+                </Link>
+              )}
+            </div>
+          </div>
+        </header>
 
-      {currentCurriculo.resumoProfissional && (
+        {currentCurriculo.resumoProfissional && (
+          <CurriculoSecao
+            titulo='Resumo Profissional'
+            icon={<User size={20} className='text-primary' />}
+            isEditMode={isEditMode}
+            onEditClick={() => handleOpenModal('infoPessoal')}
+          >
+            <p className='text-gray-700 leading-relaxed'>{currentCurriculo.resumoProfissional}</p>
+          </CurriculoSecao>
+        )}
+
         <CurriculoSecao
-          titulo='Resumo Profissional'
-          icon={<User size={20} className='text-primary' />}
+          titulo='Experiência Profissional'
+          icon={<Briefcase size={20} className='text-primary' />}
           isEditMode={isEditMode}
-          onEditClick={() => handleOpenModal('infoPessoal')}
+          onEditClick={() => handleOpenModal('experiencia')}
         >
-          <p className='text-gray-700 leading-relaxed'>{currentCurriculo.resumoProfissional}</p>
-        </CurriculoSecao>
-      )}
-
-      <CurriculoSecao
-        titulo='Experiência Profissional'
-        icon={<Briefcase size={20} className='text-primary' />}
-        isEditMode={isEditMode}
-        onEditClick={() => handleOpenModal('experiencia')}
-      >
-        <div className='space-y-6'>
-          {currentCurriculo.experienciasProfissionais.map((exp) => (
-            <div key={exp.id}>
-              <h3 className='text-lg font-semibold text-gray-800'>{exp.cargo}</h3>
-              <p className='text-md text-gray-700'>
-                {exp.nomeEmpresa} • {exp.local}
-              </p>
-              <p className='text-sm text-gray-500 capitalize'>
-                {formatarData(exp.dataInicio)} - {exp.trabalhoAtual ? 'Presente' : formatarData(exp.dataFim)}
-              </p>
-              {exp.descricao && <p className='mt-2 text-sm text-gray-600 whitespace-pre-line'>{exp.descricao}</p>}
-            </div>
-          ))}
-        </div>
-      </CurriculoSecao>
-
-      <CurriculoSecao
-        titulo='Formação Acadêmica'
-        icon={<FileText size={20} className='text-primary' />}
-        isEditMode={isEditMode}
-        onEditClick={() => handleOpenModal('formacao')}
-      >
-        <div className='space-y-6'>
-          {currentCurriculo.formacoesAcademicas.map((formacao) => (
-            <div key={formacao.id}>
-              <h3 className='text-lg font-semibold text-gray-800'>{formacao.curso}</h3>
-              <p className='text-md text-gray-700'>{formacao.instituicao}</p>
-              <p className='text-sm text-gray-500 capitalize'>
-                {formatarData(formacao.dataInicio)} - {formacao.emCurso ? 'Presente' : formatarData(formacao.dataFim)}
-              </p>
-            </div>
-          ))}
-        </div>
-      </CurriculoSecao>
-
-      <CurriculoSecao
-        titulo='Habilidades'
-        icon={<Star size={20} className='text-primary' />}
-        isEditMode={isEditMode}
-        onEditClick={() => handleOpenModal('habilidades')}
-      >
-        <div className='flex flex-wrap gap-2'>
-          {currentCurriculo.habilidades.map((hab) => (
-            <Badge key={hab.id} variant='secondary'>
-              {hab.nome}
-            </Badge>
-          ))}
-        </div>
-      </CurriculoSecao>
-
-      <CurriculoSecao
-        titulo='Idiomas'
-        icon={<Languages size={20} className='text-primary' />}
-        isEditMode={isEditMode}
-        onEditClick={() => handleOpenModal('idiomas')}
-      >
-        <div className='space-y-2'>
-          {currentCurriculo.idiomas.map((idioma) => (
-            <p key={idioma.id} className='text-gray-700'>
-              {idioma.nome} - <span className='font-semibold capitalize'>{idioma.nivel.toLowerCase()}</span>
-            </p>
-          ))}
-        </div>
-      </CurriculoSecao>
-
-      <CurriculoSecao
-        titulo='Projetos'
-        icon={<Lightbulb size={20} className='text-primary' />}
-        isEditMode={isEditMode}
-        onEditClick={() => handleOpenModal('projetos')}
-      >
-        <div className='space-y-6'>
-          {currentCurriculo.projetos.map((proj) => (
-            <div key={proj.id}>
-              <div className='flex items-center gap-2'>
-                <h3 className='text-lg font-semibold text-gray-800'>{proj.nome}</h3>
-                {proj.projectUrl && (
-                  <Link href={proj.projectUrl} target='_blank'>
-                    <LinkIcon size={14} className='text-blue-600 hover:underline' />
-                  </Link>
-                )}
-                {proj.repositorioUrl && (
-                  <Link href={proj.repositorioUrl} target='_blank'>
-                    <Github size={14} className='text-gray-800 hover:underline' />
-                  </Link>
-                )}
+          <div className='space-y-6'>
+            {currentCurriculo.experienciasProfissionais.map((exp) => (
+              <div key={exp.id}>
+                <h3 className='text-lg font-semibold text-gray-800'>{exp.cargo}</h3>
+                <p className='text-md text-gray-700'>
+                  {exp.nomeEmpresa} • {exp.local}
+                </p>
+                <p className='text-sm text-gray-500 capitalize'>
+                  {formatarData(exp.dataInicio)} - {exp.trabalhoAtual ? 'Presente' : formatarData(exp.dataFim)}
+                </p>
+                {exp.descricao && <p className='mt-2 text-sm text-gray-600 whitespace-pre-line'>{exp.descricao}</p>}
               </div>
-              {proj.descricao && <p className='mt-1 text-sm text-gray-600'>{proj.descricao}</p>}
-            </div>
-          ))}
-        </div>
-      </CurriculoSecao>
+            ))}
+          </div>
+        </CurriculoSecao>
 
-      <CurriculoSecao
-        titulo='Certificações'
-        icon={<Award size={20} className='text-primary' />}
-        isEditMode={isEditMode}
-        onEditClick={() => handleOpenModal('certificacoes')}
-      >
-        <div className='space-y-4'>
-          {currentCurriculo.certificacoes.map((cert) => (
-            <div key={cert.id}>
-              <h3 className='text-md font-semibold text-gray-800'>{cert.nome}</h3>
-              <p className='text-sm text-gray-700'>
-                {cert.organizacaoEmissora} - {formatarData(cert.dataEmissao)}
+        <CurriculoSecao
+          titulo='Formação Acadêmica'
+          icon={<FileText size={20} className='text-primary' />}
+          isEditMode={isEditMode}
+          onEditClick={() => handleOpenModal('formacao')}
+        >
+          <div className='space-y-6'>
+            {currentCurriculo.formacoesAcademicas.map((formacao) => (
+              <div key={formacao.id}>
+                <h3 className='text-lg font-semibold text-gray-800'>{formacao.curso}</h3>
+                <p className='text-md text-gray-700'>{formacao.instituicao}</p>
+                <p className='text-sm text-gray-500 capitalize'>
+                  {formatarData(formacao.dataInicio)} - {formacao.emCurso ? 'Presente' : formatarData(formacao.dataFim)}
+                </p>
+              </div>
+            ))}
+          </div>
+        </CurriculoSecao>
+
+        <CurriculoSecao
+          titulo='Habilidades'
+          icon={<Star size={20} className='text-primary' />}
+          isEditMode={isEditMode}
+          onEditClick={() => handleOpenModal('habilidades')}
+        >
+          <div className='flex flex-wrap gap-2'>
+            {currentCurriculo.habilidades.map((hab) => (
+              <Badge key={hab.id} variant='secondary'>
+                {hab.nome}
+              </Badge>
+            ))}
+          </div>
+        </CurriculoSecao>
+
+        <CurriculoSecao
+          titulo='Idiomas'
+          icon={<Languages size={20} className='text-primary' />}
+          isEditMode={isEditMode}
+          onEditClick={() => handleOpenModal('idiomas')}
+        >
+          <div className='space-y-2'>
+            {currentCurriculo.idiomas.map((idioma) => (
+              <p key={idioma.id} className='text-gray-700'>
+                {idioma.nome} - <span className='font-semibold capitalize'>{idioma.nivel.toLowerCase()}</span>
               </p>
-            </div>
-          ))}
-        </div>
-      </CurriculoSecao>
+            ))}
+          </div>
+        </CurriculoSecao>
 
-      {activeModal === 'infoPessoal' && (
-        <CurriculoSecaoModal isOpen={true} setIsOpen={handleCloseModal} title='Editar Informações Pessoais'>
-          <InformacoesPessoaisForm setModalOpen={handleCloseModal} />
-        </CurriculoSecaoModal>
-      )}
-      {activeModal === 'experiencia' && (
-        <CurriculoSecaoModal isOpen={true} setIsOpen={handleCloseModal} title='Gerenciar Experiências Profissionais' dialogContentClassName='sm:max-w-2xl'>
-          <ExperienciaHub setModalOpen={handleCloseModal} />
-        </CurriculoSecaoModal>
-      )}
-      {activeModal === 'formacao' && (
-        <CurriculoSecaoModal isOpen={true} setIsOpen={handleCloseModal} title='Gerenciar Formação Acadêmica' dialogContentClassName='sm:max-w-2xl'>
-          <FormacaoHub setModalOpen={handleCloseModal} />
-        </CurriculoSecaoModal>
-      )}
-      {activeModal === 'habilidades' && (
-        <CurriculoSecaoModal isOpen={true} setIsOpen={handleCloseModal} title='Gerenciar Habilidades' dialogContentClassName='sm:max-w-xl'>
-          <HabilidadeHub setModalOpen={handleCloseModal} />
-        </CurriculoSecaoModal>
-      )}
-      {activeModal === 'idiomas' && (
-        <CurriculoSecaoModal isOpen={true} setIsOpen={handleCloseModal} title='Gerenciar Idiomas' dialogContentClassName='sm:max-w-xl'>
-          <IdiomaHub setModalOpen={handleCloseModal} />
-        </CurriculoSecaoModal>
-      )}
-      {activeModal === 'projetos' && (
-        <CurriculoSecaoModal isOpen={true} setIsOpen={handleCloseModal} title='Gerenciar Projetos' dialogContentClassName='sm:max-w-xl'>
-          <ProjetoHub setModalOpen={handleCloseModal} />
-        </CurriculoSecaoModal>
-      )}
-      {activeModal === 'certificacoes' && (
-        <CurriculoSecaoModal isOpen={true} setIsOpen={handleCloseModal} title='Gerenciar Certificações' dialogContentClassName='sm:max-w-xl'>
-          <CertificacaoHub setModalOpen={handleCloseModal} />
-        </CurriculoSecaoModal>
-      )}
+        <CurriculoSecao
+          titulo='Projetos'
+          icon={<Lightbulb size={20} className='text-primary' />}
+          isEditMode={isEditMode}
+          onEditClick={() => handleOpenModal('projetos')}
+        >
+          <div className='space-y-6'>
+            {currentCurriculo.projetos.map((proj) => (
+              <div key={proj.id}>
+                <div className='flex items-center gap-2'>
+                  <h3 className='text-lg font-semibold text-gray-800'>{proj.nome}</h3>
+                  {proj.projectUrl && (
+                    <Link href={proj.projectUrl} target='_blank'>
+                      <LinkIcon size={14} className='text-blue-600 hover:underline' />
+                    </Link>
+                  )}
+                  {proj.repositorioUrl && (
+                    <Link href={proj.repositorioUrl} target='_blank'>
+                      <Github size={14} className='text-gray-800 hover:underline' />
+                    </Link>
+                  )}
+                </div>
+                {proj.descricao && <p className='mt-1 text-sm text-gray-600'>{proj.descricao}</p>}
+              </div>
+            ))}
+          </div>
+        </CurriculoSecao>
 
-    </div>
+        <CurriculoSecao
+          titulo='Certificações'
+          icon={<Award size={20} className='text-primary' />}
+          isEditMode={isEditMode}
+          onEditClick={() => handleOpenModal('certificacoes')}
+        >
+          <div className='space-y-4'>
+            {currentCurriculo.certificacoes.map((cert) => (
+              <div key={cert.id}>
+                <div className="flex items-center gap-2">
+                  <h3 className='text-md font-semibold text-gray-800'>{cert.nome}</h3>
+                  {
+                    cert.credencialUrl && (
+                      <Link href={cert.credencialUrl} target='_blank'>
+                        <LinkIcon size={14} className='text-blue-600 hover:underline' />
+                      </Link>
+                    )
+                  }
+                </div>
+                <p className='text-sm text-gray-700'>
+                  {cert.organizacaoEmissora} - {formatarData(cert.dataEmissao)}
+                </p>
+              </div>
+            ))}
+          </div>
+        </CurriculoSecao>
+
+        {activeModal === 'infoPessoal' && (
+          <CurriculoSecaoModal isOpen={true} setIsOpen={handleCloseModal} title='Editar Informações Pessoais'>
+            <InformacoesPessoaisForm setModalOpen={handleCloseModal} />
+          </CurriculoSecaoModal>
+        )}
+        {activeModal === 'experiencia' && (
+          <CurriculoSecaoModal isOpen={true} setIsOpen={handleCloseModal} title='Gerenciar Experiências Profissionais' dialogContentClassName='sm:max-w-2xl'>
+            <ExperienciaHub setModalOpen={handleCloseModal} />
+          </CurriculoSecaoModal>
+        )}
+        {activeModal === 'formacao' && (
+          <CurriculoSecaoModal isOpen={true} setIsOpen={handleCloseModal} title='Gerenciar Formação Acadêmica' dialogContentClassName='sm:max-w-2xl'>
+            <FormacaoHub setModalOpen={handleCloseModal} />
+          </CurriculoSecaoModal>
+        )}
+        {activeModal === 'habilidades' && (
+          <CurriculoSecaoModal isOpen={true} setIsOpen={handleCloseModal} title='Gerenciar Habilidades' dialogContentClassName='sm:max-w-xl'>
+            <HabilidadeHub setModalOpen={handleCloseModal} />
+          </CurriculoSecaoModal>
+        )}
+        {activeModal === 'idiomas' && (
+          <CurriculoSecaoModal isOpen={true} setIsOpen={handleCloseModal} title='Gerenciar Idiomas' dialogContentClassName='sm:max-w-xl'>
+            <IdiomaHub setModalOpen={handleCloseModal} />
+          </CurriculoSecaoModal>
+        )}
+        {activeModal === 'projetos' && (
+          <CurriculoSecaoModal isOpen={true} setIsOpen={handleCloseModal} title='Gerenciar Projetos' dialogContentClassName='sm:max-w-xl'>
+            <ProjetoHub setModalOpen={handleCloseModal} />
+          </CurriculoSecaoModal>
+        )}
+        {activeModal === 'certificacoes' && (
+          <CurriculoSecaoModal isOpen={true} setIsOpen={handleCloseModal} title='Gerenciar Certificações' dialogContentClassName='sm:max-w-xl'>
+            <CertificacaoHub setModalOpen={handleCloseModal} />
+          </CurriculoSecaoModal>
+        )}
+
+      </div>
+    </ModeTransitionWrapper>
   );
 }
