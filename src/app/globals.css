@@ -69,3 +69,38 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.transition-transform {
+  transition-property: transform;
+}
+.duration-400 {
+  transition-duration: 400ms;
+}
+.ease-in-out {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+.rotate-180 {
+  transform: rotate(180deg);
+}
+.rotate-0 {
+  transform: rotate(0deg);
+}
+.scale-0 {
+  transform: scale(0);
+}
+.scale-100 {
+  transform: scale(1);
+}
+
+@keyframes button-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px); 
+  }
+}
+
+.animate-button-bounce {
+  animation: button-bounce 0.3s ease-in-out;
+}

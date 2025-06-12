@@ -1,14 +1,8 @@
-"use client";
+'use client';
 
 import React from 'react';
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 
 interface CurriculoSecaoModalProps {
@@ -26,16 +20,14 @@ export function CurriculoSecaoModal({
   title,
   description,
   children,
-  dialogContentClassName = "sm:max-w-lg"
+  dialogContentClassName = 'sm:max-w-lg',
 }: CurriculoSecaoModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className={cn(dialogContentClassName)}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          {description && (
-            <DialogDescription>{description}</DialogDescription>
-          )}
+          {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
         {children}
       </DialogContent>

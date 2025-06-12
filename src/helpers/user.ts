@@ -1,6 +1,6 @@
-import { Usuario } from "@prisma/client"; 
+import { Usuario } from '@prisma/client';
 
-import { prisma } from "../lib/prisma"; 
+import { prisma } from '../lib/prisma';
 
 /**
  * Procura um usuário no banco de dados pelo ID.
@@ -16,7 +16,7 @@ export async function procurarUsuarioPorId(id: string): Promise<Usuario | null> 
     });
     return usuario;
   } catch (error) {
-    console.error("Erro ao procurar usuário por ID:", error);
-    throw new Error("Falha ao procurar usuário por ID.");
+    console.error('Erro ao procurar usuário por ID:', error);
+    throw new Error('Falha ao procurar usuário por ID.');
   }
 }

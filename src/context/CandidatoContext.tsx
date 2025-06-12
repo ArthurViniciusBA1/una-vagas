@@ -1,30 +1,48 @@
-"use client";
+// src/context/CandidatoContext.tsx
+'use client';
 
 import { Prisma, RoleUsuario } from '@prisma/client';
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-import { tCertificacao, tCurriculoInformacoesPessoais, tExperienciaProfissional, tFormacaoAcademica, tHabilidade, tIdioma, tProjeto } from '@/schemas/curriculoSchema';
+import {
+  saveExperienciaAction, // Importação da Server Action
+  deleteExperienciaAction, // Importação da Server Action
+  saveFormacaoAction, // Importação da Server Action
+  deleteFormacaoAction, // Importação da Server Action
+  saveHabilidadeAction, // Importação da Server Action
+  deleteHabilidadeAction, // Importação da Server Action
+  saveIdiomaAction, // Importação da Server Action
+  deleteIdiomaAction, // Importação da Server Action
+  saveProjetoAction, // Importação da Server Action
+  deleteProjetoAction, // Importação da Server Action
+  saveCertificacaoAction, // Importação da Server Action
+  deleteCertificacaoAction, // Importação da Server Action
+} from '@/actions/curriculoParcialActions';
+import {
+  tCertificacao,
+  tCurriculoInformacoesPessoais,
+  tExperienciaProfissional,
+  tFormacaoAcademica,
+  tHabilidade,
+  tIdioma,
+  tProjeto,
+} from '@/schemas/curriculoSchema';
 
-// 1. DEFINIÇÃO COMPLETA E ÚNICA DO TIPO
-// Adicionamos a relação 'usuario' aqui.
 const curriculoCompletoArgs = Prisma.validator<Prisma.CurriculoDefaultArgs>()({
-    include: {
-        usuario: { select: { id: true, nome: true, email: true } },
-        experienciasProfissionais: true,
-        formacoesAcademicas: true,
-        habilidades: true,
-        idiomas: true,
-        projetos: true,
-        certificacoes: true,
-    }
+  include: {
+    usuario: { select: { id: true, nome: true, email: true } },
+    experienciasProfissionais: true,
+    formacoesAcademicas: true,
+    habilidades: true,
+    idiomas: true,
+    projetos: true,
+    certificacoes: true,
+  },
 });
 
-// Este é o nosso tipo oficial e único para um currículo com todas as relações
 export type CurriculoCompleto = Prisma.CurriculoGetPayload<typeof curriculoCompletoArgs>;
 
-
-// --- O resto do contexto ---
 
 interface CandidatoProfileData {
   id: string;
@@ -36,7 +54,7 @@ interface CandidatoProfileData {
 
 interface CandidatoContextType {
   candidato: CandidatoProfileData | null;
-  curriculo: CurriculoCompleto | null; // Usamos o tipo correto
+  curriculo: CurriculoCompleto | null;
   isLoading: boolean;
   error: string | null;
   fetchCandidatoData: () => Promise<void>;
@@ -59,7 +77,7 @@ const CandidatoContext = createContext<CandidatoContextType | undefined>(undefin
 
 export const CandidatoProvider = ({ children }: { children: React.ReactNode }) => {
   const [candidato, setCandidato] = useState<CandidatoProfileData | null>(null);
-  const [curriculo, setCurriculo] = useState<CurriculoCompleto | null>(null); // Usamos o tipo correto
+  const [curriculo, setCurriculo] = useState<CurriculoCompleto | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -69,14 +87,14 @@ export const CandidatoProvider = ({ children }: { children: React.ReactNode }) =
     try {
       const response = await fetch('/api/candidato/meus-dados');
       if (!response.ok) {
-        const errData = await response.json().catch(() => ({error: "Falha ao buscar dados do candidato."}));
+        const errData = await response.json().catch(() => ({ error: 'Falha ao buscar dados do candidato.' }));
         throw new Error(errData.error);
       }
       const data = await response.json();
       setCandidato(data.usuario);
       setCurriculo(data.curriculo || null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao carregar dados.");
+      setError(err instanceof Error ? err.message : 'Erro ao carregar dados.');
     } finally {
       setIsLoading(false);
     }
@@ -86,222 +104,130 @@ export const CandidatoProvider = ({ children }: { children: React.ReactNode }) =
     fetchCandidatoData();
   }, [fetchCandidatoData]);
 
-  // As funções de save/delete não precisam de alteração
+  // Adaptação da função para usar Server Action
   const updateInformacoesPessoais = async (data: tCurriculoInformacoesPessoais) => {
     try {
+      // Como não temos uma Server Action específica para Informacoes Pessoais ainda no curriculoParcialActions,
+      // manteremos a chamada à API por enquanto. A Server Action `save*Action` é para as outras entidades.
+      // Se você criar uma Server Action para 'InformacoesPessoais', ela seria chamada aqui.
       const response = await fetch('/api/curriculo/informacoes-pessoais', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
       if (!response.ok) throw new Error((await response.json()).error);
-      toast.success("Informações pessoais salvas com sucesso!");
+      toast.success('Informações pessoais salvas com sucesso!');
       await fetchCandidatoData();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erro ao salvar.");
+      toast.error(err instanceof Error ? err.message : 'Erro ao salvar.');
       throw err;
     }
   };
 
+  // Adaptação das funções para usar Server Actions
   const saveExperiencia = async (data: tExperienciaProfissional) => {
-    try {
-      const response = await fetch('/api/curriculo/experiencias', {
-        method: data.id ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) throw new Error((await response.json()).error);
-      toast.success("Experiência salva com sucesso!");
-      await fetchCandidatoData();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erro ao salvar experiência.");
-      throw err;
+    const res = await saveExperienciaAction(data);
+    if (!res.success) {
+      throw new Error(res.error || 'Erro ao salvar experiência.');
     }
+    await fetchCandidatoData();
   };
 
   const deleteExperiencia = async (id: string) => {
-    try {
-      const response = await fetch(`/api/curriculo/experiencias`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id }),
-      });
-      if (!response.ok) throw new Error((await response.json()).error);
-      toast.success("Experiência removida com sucesso!");
-      await fetchCandidatoData();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erro ao remover experiência.");
-      throw err;
+    const res = await deleteExperienciaAction(id);
+    if (!res.success) {
+      throw new Error(res.error || 'Erro ao remover experiência.');
     }
+    await fetchCandidatoData();
   };
 
   const saveFormacao = async (data: tFormacaoAcademica) => {
-    try {
-      const response = await fetch('/api/curriculo/formacao', {
-        method: data.id ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) throw new Error((await response.json()).error || "Falha ao salvar formação.");
-      toast.success("Formação salva com sucesso!");
-      await fetchCandidatoData();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erro ao salvar formação.");
-      throw err;
+    const res = await saveFormacaoAction(data);
+    if (!res.success) {
+      throw new Error(res.error || 'Erro ao salvar formação.');
     }
+    await fetchCandidatoData();
   };
 
   const deleteFormacao = async (id: string) => {
-    try {
-      const response = await fetch(`/api/curriculo/formacao`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id }),
-      });
-      if (!response.ok) throw new Error((await response.json()).error || "Falha ao remover formação.");
-      toast.success("Formação removida com sucesso!");
-      await fetchCandidatoData();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erro ao remover formação.");
-      throw err;
+    const res = await deleteFormacaoAction(id);
+    if (!res.success) {
+      throw new Error(res.error || 'Erro ao remover formação.');
     }
+    await fetchCandidatoData();
   };
-  
+
   const saveHabilidade = async (data: tHabilidade) => {
-    try {
-      const response = await fetch('/api/curriculo/habilidades', {
-        method: data.id ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) throw new Error((await response.json()).error || "Falha ao salvar habilidade.");
-      toast.success("Habilidade salva com sucesso!");
-      await fetchCandidatoData();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erro ao salvar habilidade.");
-      throw err;
+    const res = await saveHabilidadeAction(data);
+    if (!res.success) {
+      throw new Error(res.error || 'Erro ao salvar habilidade.');
     }
+    await fetchCandidatoData();
   };
 
   const deleteHabilidade = async (id: string) => {
-    try {
-      const response = await fetch(`/api/curriculo/habilidades`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id }),
-      });
-      if (!response.ok) throw new Error((await response.json()).error || "Falha ao remover habilidade.");
-      toast.success("Habilidade removida com sucesso!");
-      await fetchCandidatoData();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erro ao remover habilidade.");
-      throw err;
+    const res = await deleteHabilidadeAction(id);
+    if (!res.success) {
+      throw new Error(res.error || 'Erro ao remover habilidade.');
     }
+    await fetchCandidatoData();
   };
 
   const saveIdioma = async (data: tIdioma) => {
-    try {
-      const response = await fetch('/api/curriculo/idiomas', {
-        method: data.id ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) throw new Error((await response.json()).error || "Falha ao salvar idioma.");
-      toast.success("Idioma salvo com sucesso!");
-      await fetchCandidatoData();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erro ao salvar idioma.");
-      throw err;
+    const res = await saveIdiomaAction(data);
+    if (!res.success) {
+      throw new Error(res.error || 'Erro ao salvar idioma.');
     }
+    await fetchCandidatoData();
   };
 
   const deleteIdioma = async (id: string) => {
-    try {
-      const response = await fetch(`/api/curriculo/idiomas`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id }),
-      });
-      if (!response.ok) throw new Error((await response.json()).error || "Falha ao remover idioma.");
-      toast.success("Idioma removido com sucesso!");
-      await fetchCandidatoData();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erro ao remover idioma.");
-      throw err;
+    const res = await deleteIdiomaAction(id);
+    if (!res.success) {
+      throw new Error(res.error || 'Erro ao remover idioma.');
     }
+    await fetchCandidatoData();
   };
 
   const saveProjeto = async (data: tProjeto) => {
-    try {
-      const response = await fetch('/api/curriculo/projetos', {
-        method: data.id ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) throw new Error((await response.json()).error || "Falha ao salvar projeto.");
-      toast.success("Projeto salvo com sucesso!");
-      await fetchCandidatoData();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erro ao salvar projeto.");
-      throw err;
+    const res = await saveProjetoAction(data);
+    if (!res.success) {
+      throw new Error(res.error || 'Erro ao salvar projeto.');
     }
+    await fetchCandidatoData();
   };
 
   const deleteProjeto = async (id: string) => {
-    try {
-      const response = await fetch(`/api/curriculo/projetos`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id }),
-      });
-      if (!response.ok) throw new Error((await response.json()).error || "Falha ao remover projeto.");
-      toast.success("Projeto removido com sucesso!");
-      await fetchCandidatoData();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erro ao remover projeto.");
-      throw err;
+    const res = await deleteProjetoAction(id);
+    if (!res.success) {
+      throw new Error(res.error || 'Erro ao remover projeto.');
     }
+    await fetchCandidatoData();
   };
 
   const saveCertificacao = async (data: tCertificacao) => {
-    try {
-      const response = await fetch('/api/curriculo/certificacoes', {
-        method: data.id ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) throw new Error((await response.json()).error || "Falha ao salvar certificação.");
-      toast.success("Certificação salva com sucesso!");
-      await fetchCandidatoData();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erro ao salvar certificação.");
-      throw err;
+    const res = await saveCertificacaoAction(data);
+    if (!res.success) {
+      throw new Error(res.error || 'Erro ao salvar certificação.');
     }
+    await fetchCandidatoData();
   };
 
   const deleteCertificacao = async (id: string) => {
-    try {
-      const response = await fetch(`/api/curriculo/certificacoes`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id }),
-      });
-      if (!response.ok) throw new Error((await response.json()).error || "Falha ao remover certificação.");
-      toast.success("Certificação removida com sucesso!");
-      await fetchCandidatoData();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erro ao remover certificação.");
-      throw err;
+    const res = await deleteCertificacaoAction(id);
+    if (!res.success) {
+      throw new Error(res.error || 'Erro ao remover certificação.');
     }
+    await fetchCandidatoData();
   };
 
-
   return (
-    <CandidatoContext.Provider value={{ 
-        candidato, 
-        curriculo, 
-        isLoading, 
-        error, 
+    <CandidatoContext.Provider
+      value={{
+        candidato,
+        curriculo,
+        isLoading,
+        error,
         fetchCandidatoData,
         updateInformacoesPessoais,
         saveExperiencia,
@@ -315,8 +241,9 @@ export const CandidatoProvider = ({ children }: { children: React.ReactNode }) =
         saveProjeto,
         deleteProjeto,
         saveCertificacao,
-        deleteCertificacao
-    }}>
+        deleteCertificacao,
+      }}
+    >
       {children}
     </CandidatoContext.Provider>
   );

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React from 'react';
 
@@ -12,7 +12,15 @@ import { HabilidadeHub } from './management/HabilidadeHub';
 import { IdiomaHub } from './management/IdiomaHub';
 import { ProjetoHub } from './management/ProjetoHub';
 
-type ActiveModalType = 'infoPessoal' | 'experiencia' | 'formacao' | 'habilidades' | 'idiomas' | 'projetos' | 'certificacoes' | null;
+type ActiveModalType =
+  | 'infoPessoal'
+  | 'experiencia'
+  | 'formacao'
+  | 'habilidades'
+  | 'idiomas'
+  | 'projetos'
+  | 'certificacoes'
+  | null;
 
 interface DashboardModalsManagerProps {
   activeModal: ActiveModalType;
@@ -24,64 +32,60 @@ export function DashboardModalsManager({ activeModal, setActiveModal }: Dashboar
 
   return (
     <>
-      <CurriculoSecaoModal 
-        isOpen={activeModal === 'infoPessoal'} 
-        setIsOpen={closeModal} 
-        title="Editar Informações Pessoais"
-      >
+      <CurriculoSecaoModal isOpen={activeModal === 'infoPessoal'} setIsOpen={closeModal} title='Editar Informações Pessoais'>
         <InformacoesPessoaisForm setModalOpen={closeModal} />
       </CurriculoSecaoModal>
 
-      <CurriculoSecaoModal 
-        isOpen={activeModal === 'experiencia'} 
-        setIsOpen={closeModal} 
-        title="Gerenciar Experiências Profissionais"
-        dialogContentClassName="sm:max-w-2xl"
+      <CurriculoSecaoModal
+        isOpen={activeModal === 'experiencia'}
+        setIsOpen={closeModal}
+        title='Gerenciar Experiências Profissionais'
+        dialogContentClassName='sm:max-w-2xl'
       >
         {activeModal === 'experiencia' && <ExperienciaHub setModalOpen={closeModal} />}
       </CurriculoSecaoModal>
-      
-      <CurriculoSecaoModal 
-        isOpen={activeModal === 'formacao'} 
-        setIsOpen={closeModal} 
-        title="Gerenciar Formação Acadêmica"
-        dialogContentClassName="sm:max-w-2xl"
+
+      <CurriculoSecaoModal
+        isOpen={activeModal === 'formacao'}
+        setIsOpen={closeModal}
+        title='Gerenciar Formação Acadêmica'
+        dialogContentClassName='sm:max-w-2xl'
       >
         {activeModal === 'formacao' && <FormacaoHub setModalOpen={closeModal} />}
       </CurriculoSecaoModal>
 
-      <CurriculoSecaoModal 
-        isOpen={activeModal === 'habilidades'} 
-        setIsOpen={closeModal} 
-        title="Gerenciar Habilidades"
-        dialogContentClassName="sm:max-w-xl"
+      <CurriculoSecaoModal
+        isOpen={activeModal === 'habilidades'}
+        setIsOpen={closeModal}
+        title='Gerenciar Habilidades'
+        dialogContentClassName='sm:max-w-xl'
       >
         {activeModal === 'habilidades' && <HabilidadeHub setModalOpen={closeModal} />}
       </CurriculoSecaoModal>
 
-      <CurriculoSecaoModal 
-        isOpen={activeModal === 'idiomas'} 
-        setIsOpen={closeModal} 
-        title="Gerenciar Idiomas"
-        dialogContentClassName="sm:max-w-xl"
+      <CurriculoSecaoModal
+        isOpen={activeModal === 'idiomas'}
+        setIsOpen={closeModal}
+        title='Gerenciar Idiomas'
+        dialogContentClassName='sm:max-w-xl'
       >
         {activeModal === 'idiomas' && <IdiomaHub setModalOpen={closeModal} />}
       </CurriculoSecaoModal>
 
-      <CurriculoSecaoModal 
-        isOpen={activeModal === 'projetos'} 
-        setIsOpen={closeModal} 
-        title="Gerenciar Projetos"
-        dialogContentClassName="sm:max-w-xl"
+      <CurriculoSecaoModal
+        isOpen={activeModal === 'projetos'}
+        setIsOpen={closeModal}
+        title='Gerenciar Projetos'
+        dialogContentClassName='sm:max-w-xl'
       >
         {activeModal === 'projetos' && <ProjetoHub setModalOpen={closeModal} />}
       </CurriculoSecaoModal>
-      
-      <CurriculoSecaoModal 
-        isOpen={activeModal === 'certificacoes'} 
-        setIsOpen={closeModal} 
-        title="Gerenciar Certificações"
-        dialogContentClassName="sm:max-w-xl"
+
+      <CurriculoSecaoModal
+        isOpen={activeModal === 'certificacoes'}
+        setIsOpen={closeModal}
+        title='Gerenciar Certificações'
+        dialogContentClassName='sm:max-w-xl'
       >
         {activeModal === 'certificacoes' && <CertificacaoHub setModalOpen={closeModal} />}
       </CurriculoSecaoModal>

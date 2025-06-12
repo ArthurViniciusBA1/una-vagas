@@ -1,18 +1,17 @@
-import "./globals.css";
+import './globals.css';
 
-import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
-import { Toaster } from "sonner";
-
+import type { Metadata } from 'next';
+import { Montserrat } from 'next/font/google';
+import { Toaster } from 'sonner';
 
 const monstserrat = Montserrat({
-  subsets: ["latin"],
-  variable: "--font-montserrat",
+  subsets: ['latin'],
+  variable: '--font-montserrat',
 });
 
 export const metadata: Metadata = {
-  title: "Vagas UNA",
-  description: "Vagas UNA | Una Itabira",
+  title: 'Vagas UNA',
+  description: 'Vagas UNA | Una Itabira',
 };
 
 export default function RootLayout({
@@ -21,11 +20,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-br">
-      <body
-        className={`${monstserrat.variable} antialiased`}
-      >
-        <Toaster richColors position="top-right" duration={5000} />
+    <html lang='pt-br'>
+      <body className={`${monstserrat.variable} antialiased`}>
+        <Toaster richColors position='top-right' duration={5000} />
         {children}
       </body>
     </html>

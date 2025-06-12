@@ -1,20 +1,17 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import React, { useEffect } from 'react';
-import { useForm } from "react-hook-form";
+import { useForm } from 'react-hook-form';
 
-import { FloatingLabelInput } from "@/components/custom/FloatingLabelInput";
+import { FloatingLabelInput } from '@/components/custom/FloatingLabelInput';
 import { FloatingLabelTextarea } from '@/components/custom/FloatingLabelTextarea';
-import { Button } from "@/components/ui/button";
-import { DialogClose,DialogFooter } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { Button } from '@/components/ui/button';
+import { DialogClose, DialogFooter } from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { useCandidato } from '@/context/CandidatoContext';
-import { 
-  curriculoInformacoesPessoaisSchema, 
-  tCurriculoInformacoesPessoais 
-} from "@/schemas/curriculoSchema";
+import { curriculoInformacoesPessoaisSchema, tCurriculoInformacoesPessoais } from '@/schemas/curriculoSchema';
 
 interface InformacoesPessoaisFormProps {
   setModalOpen: (isOpen: boolean) => void;
@@ -26,28 +23,28 @@ export function InformacoesPessoaisForm({ setModalOpen }: InformacoesPessoaisFor
   const form = useForm<tCurriculoInformacoesPessoais>({
     resolver: zodResolver(curriculoInformacoesPessoaisSchema),
     defaultValues: {
-      titulo: "",
-      resumoProfissional: "",
-      telefone: "",
-      endereco: "",
-      linkedinUrl: "",
-      githubUrl: "",
-      portfolioUrl: "",
+      titulo: '',
+      resumoProfissional: '',
+      telefone: '',
+      endereco: '',
+      linkedinUrl: '',
+      githubUrl: '',
+      portfolioUrl: '',
     },
   });
 
   useEffect(() => {
-    console.log("Dados do currículo recebidos no formulário:", curriculo);
+    console.log('Dados do currículo recebidos no formulário:', curriculo);
 
     if (curriculo) {
       form.reset({
-        titulo: curriculo.titulo ?? "",
-        resumoProfissional: curriculo.resumoProfissional ?? "",
-        telefone: curriculo.telefone ?? "",
-        endereco: curriculo.endereco ?? "",
-        linkedinUrl: curriculo.linkedinUrl ?? "",
-        githubUrl: curriculo.githubUrl ?? "",
-        portfolioUrl: curriculo.portfolioUrl ?? "",
+        titulo: curriculo.titulo ?? '',
+        resumoProfissional: curriculo.resumoProfissional ?? '',
+        telefone: curriculo.telefone ?? '',
+        endereco: curriculo.endereco ?? '',
+        linkedinUrl: curriculo.linkedinUrl ?? '',
+        githubUrl: curriculo.githubUrl ?? '',
+        portfolioUrl: curriculo.portfolioUrl ?? '',
       });
     }
   }, [curriculo, form, form.reset]);
@@ -55,22 +52,22 @@ export function InformacoesPessoaisForm({ setModalOpen }: InformacoesPessoaisFor
   const onSubmit = async (data: tCurriculoInformacoesPessoais) => {
     try {
       await updateInformacoesPessoais(data);
-      setModalOpen(false); 
+      setModalOpen(false);
     } catch (error) {
-      console.error("Falha ao submeter o formulário de informações pessoais:", error);
+      console.error('Falha ao submeter o formulário de informações pessoais:', error);
     }
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4 py-4'>
         <FormField
           control={form.control}
-          name="titulo"
+          name='titulo'
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <FloatingLabelInput label="Título do Currículo" id="tituloModal" {...field} />
+                <FloatingLabelInput label='Título do Currículo' id='tituloModal' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -78,13 +75,13 @@ export function InformacoesPessoaisForm({ setModalOpen }: InformacoesPessoaisFor
         />
         <FormField
           control={form.control}
-          name="resumoProfissional"
+          name='resumoProfissional'
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <FloatingLabelTextarea 
-                  label="Resumo Profissional / Sobre Mim" 
-                  id="resumoProfissionalModal" 
+                <FloatingLabelTextarea
+                  label='Resumo Profissional / Sobre Mim'
+                  id='resumoProfissionalModal'
                   rows={5}
                   {...field}
                 />
@@ -95,11 +92,11 @@ export function InformacoesPessoaisForm({ setModalOpen }: InformacoesPessoaisFor
         />
         <FormField
           control={form.control}
-          name="telefone"
+          name='telefone'
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <FloatingLabelInput label="Telefone (com DDD)" id="telefoneModal" type="tel" {...field} />
+                <FloatingLabelInput label='Telefone (com DDD)' id='telefoneModal' type='tel' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -107,11 +104,11 @@ export function InformacoesPessoaisForm({ setModalOpen }: InformacoesPessoaisFor
         />
         <FormField
           control={form.control}
-          name="endereco"
+          name='endereco'
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <FloatingLabelInput label="Endereço (Ex: Cidade - UF)" id="enderecoModal" {...field} />
+                <FloatingLabelInput label='Endereço (Ex: Cidade - UF)' id='enderecoModal' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -119,11 +116,11 @@ export function InformacoesPessoaisForm({ setModalOpen }: InformacoesPessoaisFor
         />
         <FormField
           control={form.control}
-          name="linkedinUrl"
+          name='linkedinUrl'
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <FloatingLabelInput label="URL do LinkedIn (opcional)" id="linkedinUrlModal" type="url" {...field}/>
+                <FloatingLabelInput label='URL do LinkedIn (opcional)' id='linkedinUrlModal' type='url' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -131,11 +128,11 @@ export function InformacoesPessoaisForm({ setModalOpen }: InformacoesPessoaisFor
         />
         <FormField
           control={form.control}
-          name="githubUrl"
+          name='githubUrl'
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <FloatingLabelInput label="URL do GitHub (opcional)" id="githubUrlModal" type="url" {...field} />
+                <FloatingLabelInput label='URL do GitHub (opcional)' id='githubUrlModal' type='url' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -143,22 +140,30 @@ export function InformacoesPessoaisForm({ setModalOpen }: InformacoesPessoaisFor
         />
         <FormField
           control={form.control}
-          name="portfolioUrl"
+          name='portfolioUrl'
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <FloatingLabelInput label="URL do Portfólio (opcional)" id="portfolioUrlModal" type="url" {...field} />
+                <FloatingLabelInput label='URL do Portfólio (opcional)' id='portfolioUrlModal' type='url' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <DialogFooter className="pt-4">
+        <DialogFooter className='pt-4'>
           <DialogClose asChild>
-            <Button type="button" variant="outline">Cancelar</Button>
+            <Button type='button' variant='outline'>
+              Cancelar
+            </Button>
           </DialogClose>
-          <Button type="submit" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Salvando...</> : "Salvar Informações"}
+          <Button type='submit' disabled={form.formState.isSubmitting}>
+            {form.formState.isSubmitting ? (
+              <>
+                <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Salvando...
+              </>
+            ) : (
+              'Salvar Informações'
+            )}
           </Button>
         </DialogFooter>
       </form>

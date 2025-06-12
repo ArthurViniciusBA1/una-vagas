@@ -11,12 +11,7 @@ interface TokenPayload extends JwtPayload {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const publicAuthEntryPages = [
-    '/entrar',
-    '/cadastro',
-    '/login-empresa',
-    '/admin/login',
-  ];
+  const publicAuthEntryPages = ['/entrar', '/cadastro', '/login-empresa', '/admin/login'];
   const isCurrentRouteAnAuthPage = publicAuthEntryPages.includes(pathname);
 
   if (
@@ -30,8 +25,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const cookieStore = await cookies()
-  const token = cookieStore.get('token')?.value
+  const cookieStore = await cookies();
+  const token = cookieStore.get('token')?.value;
 
   if (token) {
     const jwtSecret = process.env.JWT_SECRET;
@@ -39,25 +34,19 @@ export async function middleware(request: NextRequest) {
       try {
         const decodedToken = jwt.verify(token, jwtSecret) as TokenPayload;
         console.log(decodedToken);
-        
+
         if (isCurrentRouteAnAuthPage) {
           console.log(
             `Middleware: Usuário autenticado (Role: ${decodedToken.role}) em página de autenticação (${pathname}). Redirecionando...`
           );
           switch (decodedToken.role) {
             case 'ADMIN':
-              return NextResponse.redirect(
-                new URL('/admin/dashboard', request.url)
-              );
+              return NextResponse.redirect(new URL('/admin/dashboard', request.url));
             case 'RECRUTADOR':
-              return NextResponse.redirect(
-                new URL('/empresa/dashboard', request.url)
-              );
+              return NextResponse.redirect(new URL('/empresa/dashboard', request.url));
             case 'CANDIDATO':
             default:
-              return NextResponse.redirect(
-                new URL('/candidato/dashboard', request.url)
-              );
+              return NextResponse.redirect(new URL('/candidato/dashboard', request.url));
           }
         }
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
