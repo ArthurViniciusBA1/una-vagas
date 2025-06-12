@@ -103,11 +103,5 @@ export default async function PaginaVisualizacaoCurriculo({
     redirect('/entrar');
   }
 
-  return (
-    <CurriculoViewerWithEdit
-      curriculo={curriculo}
-      isEditMode={isEditMode}
-      loggedInUserId={loggedInUserId}
-    />
-  );
+  return <CurriculoViewerWithEdit curriculo={curriculo} isEditMode={isEditMode} loggedInUserId={loggedInUserId} />;
 }

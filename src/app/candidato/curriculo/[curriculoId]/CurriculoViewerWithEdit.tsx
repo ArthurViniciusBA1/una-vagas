@@ -83,7 +83,7 @@ function CurriculoSecao({
         <div className='bg-primary/10 p-2 rounded-full mr-4'>{icon}</div>
         <h2 className='text-2xl font-bold text-primary'>{titulo}</h2>
         {isEditMode && onEditClick && (
-          <Button variant="ghost" size="icon" onClick={onEditClick} className="ml-3 text-gray-500 hover:text-primary">
+          <Button variant='ghost' size='icon' onClick={onEditClick} className='ml-3 text-gray-500 hover:text-primary'>
             <Pencil size={18} />
           </Button>
         )}
@@ -93,7 +93,11 @@ function CurriculoSecao({
   );
 }
 
-export default function CurriculoViewerWithEdit({ curriculo: initialCurriculo, isEditMode, loggedInUserId }: CurriculoViewerWithEditProps) {
+export default function CurriculoViewerWithEdit({
+  curriculo: initialCurriculo,
+  isEditMode,
+  loggedInUserId,
+}: CurriculoViewerWithEditProps) {
   const { curriculo, fetchCandidatoData } = useCandidato();
 
   const currentCurriculo = curriculo || initialCurriculo;
@@ -112,7 +116,7 @@ export default function CurriculoViewerWithEdit({ curriculo: initialCurriculo, i
   };
 
   if (!currentCurriculo) {
-    return <div className="text-center text-muted-foreground">Currículo não encontrado ou carregando...</div>;
+    return <div className='text-center text-muted-foreground'>Currículo não encontrado ou carregando...</div>;
   }
 
   const isOwner = loggedInUserId === currentCurriculo.usuario.id;
@@ -275,15 +279,13 @@ export default function CurriculoViewerWithEdit({ curriculo: initialCurriculo, i
           <div className='space-y-4'>
             {currentCurriculo.certificacoes.map((cert) => (
               <div key={cert.id}>
-                <div className="flex items-center gap-2">
+                <div className='flex items-center gap-2'>
                   <h3 className='text-md font-semibold text-gray-800'>{cert.nome}</h3>
-                  {
-                    cert.credencialUrl && (
-                      <Link href={cert.credencialUrl} target='_blank'>
-                        <LinkIcon size={14} className='text-blue-600 hover:underline' />
-                      </Link>
-                    )
-                  }
+                  {cert.credencialUrl && (
+                    <Link href={cert.credencialUrl} target='_blank'>
+                      <LinkIcon size={14} className='text-blue-600 hover:underline' />
+                    </Link>
+                  )}
                 </div>
                 <p className='text-sm text-gray-700'>
                   {cert.organizacaoEmissora} - {formatarData(cert.dataEmissao)}
@@ -299,36 +301,65 @@ export default function CurriculoViewerWithEdit({ curriculo: initialCurriculo, i
           </CurriculoSecaoModal>
         )}
         {activeModal === 'experiencia' && (
-          <CurriculoSecaoModal isOpen={true} setIsOpen={handleCloseModal} title='Gerenciar Experiências Profissionais' dialogContentClassName='sm:max-w-2xl'>
+          <CurriculoSecaoModal
+            isOpen={true}
+            setIsOpen={handleCloseModal}
+            title='Gerenciar Experiências Profissionais'
+            dialogContentClassName='sm:max-w-2xl'
+          >
             <ExperienciaHub setModalOpen={handleCloseModal} />
           </CurriculoSecaoModal>
         )}
         {activeModal === 'formacao' && (
-          <CurriculoSecaoModal isOpen={true} setIsOpen={handleCloseModal} title='Gerenciar Formação Acadêmica' dialogContentClassName='sm:max-w-2xl'>
+          <CurriculoSecaoModal
+            isOpen={true}
+            setIsOpen={handleCloseModal}
+            title='Gerenciar Formação Acadêmica'
+            dialogContentClassName='sm:max-w-2xl'
+          >
             <FormacaoHub setModalOpen={handleCloseModal} />
           </CurriculoSecaoModal>
         )}
         {activeModal === 'habilidades' && (
-          <CurriculoSecaoModal isOpen={true} setIsOpen={handleCloseModal} title='Gerenciar Habilidades' dialogContentClassName='sm:max-w-xl'>
+          <CurriculoSecaoModal
+            isOpen={true}
+            setIsOpen={handleCloseModal}
+            title='Gerenciar Habilidades'
+            dialogContentClassName='sm:max-w-xl'
+          >
             <HabilidadeHub setModalOpen={handleCloseModal} />
           </CurriculoSecaoModal>
         )}
         {activeModal === 'idiomas' && (
-          <CurriculoSecaoModal isOpen={true} setIsOpen={handleCloseModal} title='Gerenciar Idiomas' dialogContentClassName='sm:max-w-xl'>
+          <CurriculoSecaoModal
+            isOpen={true}
+            setIsOpen={handleCloseModal}
+            title='Gerenciar Idiomas'
+            dialogContentClassName='sm:max-w-xl'
+          >
             <IdiomaHub setModalOpen={handleCloseModal} />
           </CurriculoSecaoModal>
         )}
         {activeModal === 'projetos' && (
-          <CurriculoSecaoModal isOpen={true} setIsOpen={handleCloseModal} title='Gerenciar Projetos' dialogContentClassName='sm:max-w-xl'>
+          <CurriculoSecaoModal
+            isOpen={true}
+            setIsOpen={handleCloseModal}
+            title='Gerenciar Projetos'
+            dialogContentClassName='sm:max-w-xl'
+          >
             <ProjetoHub setModalOpen={handleCloseModal} />
           </CurriculoSecaoModal>
         )}
         {activeModal === 'certificacoes' && (
-          <CurriculoSecaoModal isOpen={true} setIsOpen={handleCloseModal} title='Gerenciar Certificações' dialogContentClassName='sm:max-w-xl'>
+          <CurriculoSecaoModal
+            isOpen={true}
+            setIsOpen={handleCloseModal}
+            title='Gerenciar Certificações'
+            dialogContentClassName='sm:max-w-xl'
+          >
             <CertificacaoHub setModalOpen={handleCloseModal} />
           </CurriculoSecaoModal>
         )}
-
       </div>
     </ModeTransitionWrapper>
   );

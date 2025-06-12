@@ -78,12 +78,7 @@ export function CertificacaoForm({ setModalOpen, dadosIniciais }: CertificacaoFo
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <FloatingLabelInput
-                  label='Nome do Certificado'
-                  id='nomeCertificado'
-                  {...field}
-                  value={field.value ?? ''}
-                />
+                <FloatingLabelInput label='Nome do Certificado' id='nomeCertificado' {...field} value={field.value ?? ''} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -95,12 +90,7 @@ export function CertificacaoForm({ setModalOpen, dadosIniciais }: CertificacaoFo
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <FloatingLabelInput
-                  label='Organização Emissora'
-                  id='orgCertificado'
-                  {...field}
-                  value={field.value ?? ''}
-                />
+                <FloatingLabelInput label='Organização Emissora' id='orgCertificado' {...field} value={field.value ?? ''} />
               </FormControl>
               <FormMessage />
             </FormItem>

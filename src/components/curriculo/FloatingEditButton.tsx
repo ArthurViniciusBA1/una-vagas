@@ -14,7 +14,6 @@ interface FloatingEditButtonProps {
 }
 
 export function FloatingEditButton({ isEditMode, onButtonClick, iconComponent }: FloatingEditButtonProps) {
-
   const [animateButton, setAnimateButton] = useState(false);
 
   // Mude o tipo de currentIcon para React.ElementType
@@ -56,7 +55,7 @@ export function FloatingEditButton({ isEditMode, onButtonClick, iconComponent }:
                  focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
                  flex items-center justify-center transition-all duration-300 ease-in-out
                  ${animateButton ? 'animate-button-bounce' : ''}`}
-      aria-label={isEditMode ? "Sair do modo de edição" : "Entrar no modo de edição"}
+      aria-label={isEditMode ? 'Sair do modo de edição' : 'Entrar no modo de edição'}
       style={{ width: '3rem', height: '3rem' }}
     >
       {/* O ícone será renderizado normalmente, já que IconComponent é um React.ElementType */}

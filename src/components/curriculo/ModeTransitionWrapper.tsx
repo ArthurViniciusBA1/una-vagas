@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect, ReactNode } from 'react';
@@ -69,7 +68,8 @@ export function ModeTransitionWrapper({ children, isEditMode, isOwner }: ModeTra
   // Este useEffect lida com a animação de entrada (quando a página recarrega para o novo modo)
   // Ele executa apenas uma vez ao montar o componente na nova URL
   useEffect(() => {
-    if (showOverlay && isAnimatingOut) { // Se estava animando para fora, agora anima para dentro
+    if (showOverlay && isAnimatingOut) {
+      // Se estava animando para fora, agora anima para dentro
       setIsAnimatingOut(false); // Para a animação de saída
       setIsAnimatingIn(true); // Começa a animação de entrada
 
@@ -82,29 +82,26 @@ export function ModeTransitionWrapper({ children, isEditMode, isOwner }: ModeTra
     }
   }, [isEditMode, showOverlay, isAnimatingOut]);
 
-
   return (
     <>
       {/* A camada de overlay que faz a animação de expansão/retração */}
       {showOverlay && (
-        <div
-          className={`fixed inset-0 bg-blue-500 z-[9999] transition-all ease-in-out duration-500`}
-          style={overlayStyle}
-        >
+        <div className={`fixed inset-0 bg-blue-500 z-[9999] transition-all ease-in-out duration-500`} style={overlayStyle}>
           {/* Este div se expandirá */}
           {/* Quando a animação de saída termina, ele se expande completamente */}
           {isAnimatingOut && (
-            <div className="absolute inset-0 bg-blue-500" style={{ transform: 'scale(200)', borderRadius: '0' }} />
+            <div className='absolute inset-0 bg-blue-500' style={{ transform: 'scale(200)', borderRadius: '0' }} />
           )}
           {/* Quando a animação de entrada começa na nova página, ele se retrai */}
           {isAnimatingIn && (
-            <div className="absolute inset-0 bg-blue-500" style={{ transform: 'scale(0)', borderRadius: '50%', transitionDuration: '500ms' }} />
+            <div
+              className='absolute inset-0 bg-blue-500'
+              style={{ transform: 'scale(0)', borderRadius: '50%', transitionDuration: '500ms' }}
+            />
           )}
         </div>
       )}
-
       {children} {/* Conteúdo principal do currículo */}
-
       {/* Botão flutuante só aparece se o usuário for o dono */}
       {isOwner && (
         <FloatingEditButton

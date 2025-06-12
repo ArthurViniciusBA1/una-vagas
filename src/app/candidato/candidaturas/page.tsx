@@ -11,13 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { JSX, useState, useEffect, useTransition, useRef } from 'react'; // Adiciona useState, useEffect, useTransition, useRef
 import { useSearchParams, useRouter } from 'next/navigation'; // Adiciona useSearchParams, useRouter
 import { fetchUserCandidaturas } from '@/actions/candidaturaActions'; // Importa a Server Action
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { Prisma } from '@prisma/client'; // Importa Prisma para a tipagem explícita
 
@@ -45,7 +39,9 @@ const candidaturaComDetalhesArgs = Prisma.validator<Prisma.CandidaturaDefaultArg
 export type CandidaturaComDetalhes = Prisma.CandidaturaGetPayload<typeof candidaturaComDetalhesArgs>;
 
 // Helper para mapear status de candidatura para cores de badge
-const getStatusBadgeVariant = (status: string): { variant: 'secondary' | 'outline' | 'default' | 'destructive'; icon: JSX.Element } => {
+const getStatusBadgeVariant = (
+  status: string
+): { variant: 'secondary' | 'outline' | 'default' | 'destructive'; icon: JSX.Element } => {
   switch (status) {
     case 'INSCRITO':
       return { variant: 'secondary', icon: <FileText size={14} /> };
@@ -54,7 +50,7 @@ const getStatusBadgeVariant = (status: string): { variant: 'secondary' | 'outlin
     case 'EM_PROCESSO':
       return { variant: 'default', icon: <Hourglass size={14} /> };
     case 'APROVADO':
-      return { variant: 'outline', icon: <CheckCircle2 size={14} className="text-green-600" /> }; // Mantido como outline para consistência com sonner
+      return { variant: 'outline', icon: <CheckCircle2 size={14} className='text-green-600' /> }; // Mantido como outline para consistência com sonner
     case 'REJEITADO':
       return { variant: 'destructive', icon: <XCircle size={14} /> };
     case 'CANCELADA':
@@ -126,9 +122,10 @@ export default function PaginaMinhasCandidaturas() {
   }, [currentStatusFilter]);
 
   const handleStatusChange = (newStatus: string) => {
-    ignoreStrictDoubleRender.current = false; 
+    ignoreStrictDoubleRender.current = false;
 
-    startTransition(() => { // Inicia uma transição para a navegação
+    startTransition(() => {
+      // Inicia uma transição para a navegação
       const newSearchParams = new URLSearchParams(searchParams.toString());
       if (newStatus === 'TODOS') {
         newSearchParams.delete('status');
@@ -154,9 +151,10 @@ export default function PaginaMinhasCandidaturas() {
         <p className='text-lg font-semibold'>{error}</p>
         <p className='mt-4 text-center'>
           Por favor, tente{' '}
-          <Button variant="link" onClick={() => loadCandidaturas(currentStatusFilter)} className="p-0 h-auto underline">
+          <Button variant='link' onClick={() => loadCandidaturas(currentStatusFilter)} className='p-0 h-auto underline'>
             novamente
-          </Button>.
+          </Button>
+          .
         </p>
       </div>
     );
@@ -164,10 +162,10 @@ export default function PaginaMinhasCandidaturas() {
 
   if (!candidaturas) {
     return (
-      <div className="col-span-full text-center text-muted-foreground py-12">
-        <p className="text-xl">Não foi possível carregar suas candidaturas. Tente novamente.</p>
-        <p className="mt-2 text-sm">
-          <Button variant="link" onClick={() => loadCandidaturas(currentStatusFilter)} className="p-0 h-auto underline">
+      <div className='col-span-full text-center text-muted-foreground py-12'>
+        <p className='text-xl'>Não foi possível carregar suas candidaturas. Tente novamente.</p>
+        <p className='mt-2 text-sm'>
+          <Button variant='link' onClick={() => loadCandidaturas(currentStatusFilter)} className='p-0 h-auto underline'>
             Recarregar
           </Button>
         </p>
@@ -176,20 +174,18 @@ export default function PaginaMinhasCandidaturas() {
   }
 
   return (
-    <div className="w-full">
-      <header className="mb-8 md:mb-10">
-        <h1 className="text-3xl md:text-4xl font-bold text-foreground flex items-center gap-3">
+    <div className='w-full'>
+      <header className='mb-8 md:mb-10'>
+        <h1 className='text-3xl md:text-4xl font-bold text-foreground flex items-center gap-3'>
           <FileText size={32} /> Minhas Candidaturas
         </h1>
-        <p className="text-lg text-muted-foreground mt-1">
-          Acompanhe o status das suas inscrições em vagas.
-        </p>
+        <p className='text-lg text-muted-foreground mt-1'>Acompanhe o status das suas inscrições em vagas.</p>
       </header>
 
-      <div className="mb-6 flex justify-end">
+      <div className='mb-6 flex justify-end'>
         <Select onValueChange={handleStatusChange} value={currentStatusFilter}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filtrar por Status" />
+          <SelectTrigger className='w-[180px]'>
+            <SelectValue placeholder='Filtrar por Status' />
           </SelectTrigger>
           <SelectContent>
             {statusOptions.map((option) => (
@@ -201,12 +197,16 @@ export default function PaginaMinhasCandidaturas() {
         </Select>
       </div>
 
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <section className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
         {candidaturas.length === 0 ? (
-          <div className="col-span-full text-center text-muted-foreground py-12">
-            <p className="text-xl">Você ainda não se candidatou a nenhuma vaga para este status.</p>
-            <p className="mt-2 text-sm">
-              Explore as <Link href="/candidato/vagas" className="text-primary underline">vagas disponíveis</Link> e encontre sua próxima oportunidade!
+          <div className='col-span-full text-center text-muted-foreground py-12'>
+            <p className='text-xl'>Você ainda não se candidatou a nenhuma vaga para este status.</p>
+            <p className='mt-2 text-sm'>
+              Explore as{' '}
+              <Link href='/candidato/vagas' className='text-primary underline'>
+                vagas disponíveis
+              </Link>{' '}
+              e encontre sua próxima oportunidade!
             </p>
           </div>
         ) : (
@@ -215,36 +215,51 @@ export default function PaginaMinhasCandidaturas() {
             const vagaExpirada = candidatura.vaga.dataExpiracao && new Date(candidatura.vaga.dataExpiracao) < new Date();
 
             return (
-              <div key={candidatura.id} className="bg-card border border-border rounded-lg p-6 shadow-sm flex flex-col hover:shadow-md transition-shadow">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center">
+              <div
+                key={candidatura.id}
+                className='bg-card border border-border rounded-lg p-6 shadow-sm flex flex-col hover:shadow-md transition-shadow'
+              >
+                <div className='flex items-center justify-between mb-4'>
+                  <div className='flex items-center'>
                     {candidatura.vaga.empresa?.logoUrl && (
-                      <img src={candidatura.vaga.empresa.logoUrl} alt={candidatura.vaga.empresa.nome || 'Logo da Empresa'} className="w-10 h-10 rounded-full mr-3 object-cover" />
+                      <img
+                        src={candidatura.vaga.empresa.logoUrl}
+                        alt={candidatura.vaga.empresa.nome || 'Logo da Empresa'}
+                        className='w-10 h-10 rounded-full mr-3 object-cover'
+                      />
                     )}
                     <div>
-                      <h2 className="text-lg font-bold text-primary">{candidatura.vaga.titulo}</h2>
-                      <p className="text-muted-foreground text-xs">{candidatura.vaga.empresa?.nome || 'Empresa Desconhecida'}</p>
+                      <h2 className='text-lg font-bold text-primary'>{candidatura.vaga.titulo}</h2>
+                      <p className='text-muted-foreground text-xs'>
+                        {candidatura.vaga.empresa?.nome || 'Empresa Desconhecida'}
+                      </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="text-sm text-gray-600 mb-3">
-                  <p><strong>Tipo:</strong> {candidatura.vaga.tipo.replace(/_/g, ' ').toLowerCase()}</p>
-                  <p><strong>Local:</strong> {candidatura.vaga.localizacao}</p>
-                  <p><strong>Candidatura:</strong> {formatarData(candidatura.dataCandidatura)}</p>
+                <div className='text-sm text-gray-600 mb-3'>
+                  <p>
+                    <strong>Tipo:</strong> {candidatura.vaga.tipo.replace(/_/g, ' ').toLowerCase()}
+                  </p>
+                  <p>
+                    <strong>Local:</strong> {candidatura.vaga.localizacao}
+                  </p>
+                  <p>
+                    <strong>Candidatura:</strong> {formatarData(candidatura.dataCandidatura)}
+                  </p>
                 </div>
 
                 {vagaExpirada && (
-                  <p className="text-red-500 text-xs italic mb-2">
+                  <p className='text-red-500 text-xs italic mb-2'>
                     Atenção: Esta vaga expirou em {formatarData(candidatura.vaga.dataExpiracao)}.
                   </p>
                 )}
 
-                <div className="mt-auto flex justify-between items-center text-xs text-muted-foreground pt-4 border-t border-border">
-                  <Button asChild size="sm">
+                <div className='mt-auto flex justify-between items-center text-xs text-muted-foreground pt-4 border-t border-border'>
+                  <Button asChild size='sm'>
                     <Link href={`/candidato/vagas/${candidatura.vaga.id}`}>Ver Vaga</Link>
                   </Button>
-                  <Badge variant={statusInfo.variant} className="capitalize text-sm font-semibold whitespace-nowrap">
+                  <Badge variant={statusInfo.variant} className='capitalize text-sm font-semibold whitespace-nowrap'>
                     {statusInfo.icon}
                     {candidatura.status.replace(/_/g, ' ')}
                   </Badge>

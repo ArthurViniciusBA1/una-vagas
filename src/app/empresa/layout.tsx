@@ -1,7 +1,9 @@
+// src/app/empresa/layout.tsx
 import { RoleUsuario } from '@prisma/client';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { EmpresaNavbar } from '@/components/empresa/Navbar'; // Importa a nova Navbar
 
 interface TokenPayload extends JwtPayload {
   id: string;
@@ -58,8 +60,10 @@ export default async function EmpresaLayout({ children }: EmpresaLayoutProps) {
   }
 
   return (
-    <div className='layout-empresa-especifico w-full min-h-screen flex flex-col'>
-      <div className='flex-grow'>{children}</div>
+    <div className='flex flex-col min-h-screen bg-background'>
+      <EmpresaNavbar />
+      {/* CORREÇÃO AQUI: As classes de container no <main> */}
+      <main className='flex-grow container mx-auto px-4 py-6 md:py-8 max-w-screen-xl'>{children}</main>
     </div>
   );
 }
