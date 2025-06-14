@@ -1,4 +1,3 @@
-// src/app/empresa/vagas/criar-vaga/page.tsx
 'use client';
 
 import { BriefcaseBusiness, Loader2, Save } from 'lucide-react';
@@ -15,21 +14,18 @@ import { FloatingLabelInput } from '@/components/custom/FloatingLabelInput';
 import { FloatingLabelTextarea } from '@/components/custom/FloatingLabelTextarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-import { saveVagaAction } from '@/actions/vagaActions'; // Importa a Server Action de salvar vaga
-import { vagaFormSchema, tVagaForm } from '@/schemas/vagaSchema'; // Importa o schema e tipo do formulário
+import { saveVagaAction } from '@/actions/vagaActions';
+import { vagaFormSchema, tVagaForm } from '@/schemas/vagaSchema';
 
-// Valores padrão para o formulário de criação
 const defaultValues: tVagaForm = {
   titulo: '',
   descricao: '',
-  requisitos: '', // Requisitos como string para o form
-  tipo: TipoVaga.EFETIVO, // Default
+  requisitos: '',
+  tipo: TipoVaga.EFETIVO,
   localizacao: '',
   faixaSalarial: '',
   ativa: true,
-  dataExpiracao: '', // Data como string para o form
-  // empresaId e criadoPorId são preenchidos na Server Action
-  // id é undefined para criação
+  dataExpiracao: '',
 };
 
 export default function CriarVagaPage() {
@@ -43,14 +39,13 @@ export default function CriarVagaPage() {
   const onSubmit = async (data: tVagaForm) => {
     const toastId = toast.loading('Publicando vaga...');
     try {
-      const result = await saveVagaAction(data); // Chama a Server Action
+      const result = await saveVagaAction(data);
 
       if (result.success) {
         toast.success('Vaga publicada com sucesso!', { id: toastId });
-        form.reset(); // Limpa o formulário
-        router.push('/empresa/vagas'); // Redireciona para a lista de vagas
+        form.reset();
+        router.push('/empresa/vagas');
       } else {
-        // Se houver um erro de validação (Zod) da Server Action, ele estará em result.error
         toast.error(result.error || 'Falha ao publicar vaga.', { id: toastId });
       }
     } catch (error) {
@@ -119,15 +114,15 @@ export default function CriarVagaPage() {
               control={form.control}
               name='tipo'
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tipo de Vaga</FormLabel>
+                <FormItem className='flex'>
+                  <FormLabel className='wrap-normal text-center'>Tipo de Vaga</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className='w-full'>
                         <SelectValue placeholder='Selecione o tipo de vaga' />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
+                    <SelectContent className='w-full'>
                       {Object.values(TipoVaga).map((tipo) => (
                         <SelectItem key={tipo} value={tipo}>
                           {tipo.replace(/_/g, ' ').toLowerCase()}
@@ -161,11 +156,7 @@ export default function CriarVagaPage() {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <FloatingLabelInput
-                      label='Faixa Salarial (Opcional, Ex: R$ 3.000 - 5.000)'
-                      id='faixaSalarialVaga'
-                      {...field}
-                    />
+                    <FloatingLabelInput label='Faixa Salarial (Opcional)' id='faixaSalarialVaga' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
