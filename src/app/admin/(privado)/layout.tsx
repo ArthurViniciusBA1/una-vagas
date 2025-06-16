@@ -1,61 +1,27 @@
-import { RoleUsuario } from '@prisma/client';
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { RoleUsuario } from '@prisma/client';
 
-interface TokenPayload extends JwtPayload {
-  id: string;
-  nome?: string;
-  role?: RoleUsuario;
-}
+import { authorizeUser } from '@/lib/auth.server';
+import { AdminNavbar } from '@/components/admin/AdminNavbar';
 
 interface AdminPrivadoLayoutProps {
   children: React.ReactNode;
 }
 
 export default async function AdminPrivadoLayout({ children }: AdminPrivadoLayoutProps) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get('token')?.value;
-  const jwtSecret = process.env.JWT_SECRET;
+  const { isAuthorized } = await authorizeUser([RoleUsuario.ADMIN]);
 
-  if (!jwtSecret) {
-    console.error('AdminPrivadoLayout: JWT_SECRET não definido.');
-    redirect('/erro-configuracao');
-  }
-
-  let isAuthenticatedAsAdmin = false;
-
-  if (token) {
-    try {
-      const decodedToken = jwt.verify(token, jwtSecret) as TokenPayload;
-      if (decodedToken?.role === RoleUsuario.ADMIN) {
-        isAuthenticatedAsAdmin = true;
-      } else {
-        console.warn(`AdminPrivadoLayout: Tentativa de acesso por usuário com role '${decodedToken?.role}'. Redirecionando.`);
-      }
-    } catch (error) {
-      console.warn('AdminPrivadoLayout: Token inválido ou expirado.', error);
-    }
-  }
-
-  if (!isAuthenticatedAsAdmin) {
-    const headersList = await headers();
-    const currentPathname = headersList.get('x-next-pathname') || '/admin/dashboard';
+  if (!isAuthorized) {
     const errorMessage = encodeURIComponent('Acesso restrito. Faça login como administrador.');
-
-    console.log(
-      `AdminPrivadoLayout: Usuário não autenticado como ADMIN. Redirecionando para /admin/login. Path original: ${currentPathname}`
-    );
-    redirect(`/admin/login?error=${errorMessage}&redirect=${encodeURIComponent(currentPathname)}`);
+    redirect(`/admin/login?error=${errorMessage}`);
   }
 
   return (
-    // <AdminProvider data={adminDataParaContexto}>
-    <div className='layout-admin-especifico'>
-      {/* <NavbarAdmin /> */}
-      {/* <SidebarAdmin /> */}
-      <main>{children}</main>
+    <div className='flex flex-col min-h-screen bg-background'>
+      <AdminNavbar />
+      <main className='flex-grow container mx-auto px-4 py-6 md:py-8 max-w-screen-xl'>
+        {children}
+      </main>
     </div>
-    // </AdminProvider>
   );
 }

@@ -117,7 +117,7 @@ export async function fetchCandidaturasForEmpresa(
   ]);
 
   if (!isAuthorized || !userId) {
-    return { success: false, error: 'Acesso negado.' };
+    return { success: false, error: 'Acesso Negado.' };
   }
 
   try {
@@ -195,6 +195,7 @@ export async function updateCandidaturaStatusAction(
         where: { id: userId },
         select: { empresaId: true },
       });
+
       if (!usuario?.empresaId) {
         return { success: false, error: 'Usuário recrutador não associado a uma empresa.' };
       }
@@ -228,6 +229,24 @@ export async function fetchCandidaturaDetailsForRecruiter(
     RoleUsuario.ADMIN,
   ]);
   if (!isAuthorized || !userId) return { success: false, error: 'Acesso negado.' };
+
+  const includeAllDetails = {
+    vaga: true,
+    usuario: {
+      include: {
+        curriculo: {
+          include: {
+            experienciasProfissionais: { orderBy: { dataInicio: 'desc' } },
+            formacoesAcademicas: { orderBy: { dataInicio: 'desc' } },
+            habilidades: { orderBy: { nome: 'asc' } },
+            idiomas: { orderBy: { nome: 'asc' } },
+            projetos: { orderBy: { nome: 'asc' } },
+            certificacoes: { orderBy: { dataEmissao: 'desc' } },
+          },
+        },
+      },
+    },
+  };
 
   try {
     const whereClause: Prisma.CandidaturaWhereInput = { id: candidaturaId };
@@ -299,6 +318,50 @@ export async function fetchCandidaturaDetailsForRecruiter(
     return { success: true, candidatura };
   } catch (error) {
     console.error(`Erro ao buscar detalhes da candidatura ${candidaturaId}:`, error);
+    return { success: false, error: 'Ocorreu um erro no servidor.' };
+  }
+}
+
+export async function cancelarCandidaturaAction(
+  candidaturaId: string
+): Promise<UpdateStatusResult> {
+  const { isAuthorized, userId } = await authorizeUser([RoleUsuario.CANDIDATO]);
+
+  if (!isAuthorized || !userId) {
+    return { success: false, error: 'Acesso negado.' };
+  }
+
+  try {
+    const candidatura = await prisma.candidatura.findFirst({
+      where: {
+        id: candidaturaId,
+        usuarioId: userId,
+      },
+    });
+
+    if (!candidatura) {
+      return {
+        success: false,
+        error: 'Candidatura não encontrada ou você não tem permissão para cancelá-la.',
+      };
+    }
+
+    const canBeCancelled = ['INSCRITO', 'VISUALIZADA', 'EM_PROCESSO'].includes(candidatura.status);
+    if (!canBeCancelled) {
+      return {
+        success: false,
+        error: `Não é possível cancelar uma candidatura com status "${candidatura.status}".`,
+      };
+    }
+
+    await prisma.candidatura.delete({
+      where: { id: candidaturaId },
+    });
+
+    revalidatePath('/candidato/candidaturas');
+    return { success: true };
+  } catch (error) {
+    console.error('Erro ao cancelar candidatura:', error);
     return { success: false, error: 'Ocorreu um erro no servidor.' };
   }
 }

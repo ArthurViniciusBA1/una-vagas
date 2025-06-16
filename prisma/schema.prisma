@@ -58,6 +58,7 @@ model Usuario {
   numeroRA        String?   @unique
   fotoUrl         String?
   role            RoleUsuario @default(CANDIDATO)
+  ativo           Boolean   @default(true)
 
   curriculo       Curriculo? @relation("DonoDoCurriculo")
   empresaId       String?

@@ -4,14 +4,25 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { InputMask } from '@react-input/mask';
 
 import { FloatingLabelInput } from '@/components/custom/FloatingLabelInput';
 import { FloatingLabelTextarea } from '@/components/custom/FloatingLabelTextarea';
 import { Button } from '@/components/ui/button';
 import { DialogClose, DialogFooter } from '@/components/ui/dialog';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { useCandidato } from '@/context/CandidatoContext';
-import { curriculoInformacoesPessoaisSchema, tCurriculoInformacoesPessoais } from '@/schemas/curriculoSchema';
+import {
+  curriculoInformacoesPessoaisSchema,
+  tCurriculoInformacoesPessoais,
+} from '@/schemas/curriculoSchema';
 
 interface InformacoesPessoaisFormProps {
   setModalOpen: (isOpen: boolean) => void;
@@ -34,8 +45,6 @@ export function InformacoesPessoaisForm({ setModalOpen }: InformacoesPessoaisFor
   });
 
   useEffect(() => {
-    console.log('Dados do currículo recebidos no formulário:', curriculo);
-
     if (curriculo) {
       form.reset({
         titulo: curriculo.titulo ?? '',
@@ -95,8 +104,14 @@ export function InformacoesPessoaisForm({ setModalOpen }: InformacoesPessoaisFor
           name='telefone'
           render={({ field }) => (
             <FormItem>
+              <FormLabel>Telefone (com DDD)</FormLabel>
               <FormControl>
-                <FloatingLabelInput label='Telefone (com DDD)' id='telefoneModal' type='tel' {...field} />
+                <InputMask
+                  {...field}
+                  mask='(__) _ ____-____'
+                  replacement={{ _: /\d/ }}
+                  className='flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -108,7 +123,11 @@ export function InformacoesPessoaisForm({ setModalOpen }: InformacoesPessoaisFor
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <FloatingLabelInput label='Endereço (Ex: Cidade - UF)' id='enderecoModal' {...field} />
+                <FloatingLabelInput
+                  label='Endereço (Ex: Cidade - UF)'
+                  id='enderecoModal'
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -120,7 +139,12 @@ export function InformacoesPessoaisForm({ setModalOpen }: InformacoesPessoaisFor
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <FloatingLabelInput label='URL do LinkedIn (opcional)' id='linkedinUrlModal' type='url' {...field} />
+                <FloatingLabelInput
+                  label='URL do LinkedIn (opcional)'
+                  id='linkedinUrlModal'
+                  type='url'
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -132,7 +156,12 @@ export function InformacoesPessoaisForm({ setModalOpen }: InformacoesPessoaisFor
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <FloatingLabelInput label='URL do GitHub (opcional)' id='githubUrlModal' type='url' {...field} />
+                <FloatingLabelInput
+                  label='URL do GitHub (opcional)'
+                  id='githubUrlModal'
+                  type='url'
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -144,7 +173,12 @@ export function InformacoesPessoaisForm({ setModalOpen }: InformacoesPessoaisFor
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <FloatingLabelInput label='URL do Portfólio (opcional)' id='portfolioUrlModal' type='url' {...field} />
+                <FloatingLabelInput
+                  label='URL do Portfólio (opcional)'
+                  id='portfolioUrlModal'
+                  type='url'
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

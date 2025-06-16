@@ -1,19 +1,28 @@
-import { Briefcase, Building2, Calendar, DollarSign, MapPin, Tag, UserRoundCheck } from 'lucide-react';
+import {
+  Briefcase,
+  Building2,
+  Calendar,
+  DollarSign,
+  MapPin,
+  Tag,
+  UserRoundCheck,
+} from 'lucide-react';
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { notFound } from 'next/navigation';
-import { RoleUsuario, Prisma } from '@prisma/client';
+import { RoleUsuario } from '@prisma/client';
 import { authorizeUser } from '@/lib/auth.server';
 import { formatarData } from '@/lib/formatters';
 import { Key } from 'react';
+import { BotaoCandidatura } from '@/components/candidato/BotaoCandidatura';
 
-export default async function PaginaDetalheVaga({ params }: { params: Promise<{ vagaId: string }> }) {
-  const { vagaId } = await params;
+export default async function PaginaDetalheVaga({ params }: { params: { vagaId: string } }) {
+  const { vagaId } = params;
 
-  const { isAuthorized } = await authorizeUser([RoleUsuario.CANDIDATO, RoleUsuario.ADMIN]);
+  const auth = await authorizeUser([RoleUsuario.CANDIDATO, RoleUsuario.ADMIN]);
 
-  if (!isAuthorized) {
+  if (!auth.isAuthorized) {
     return (
       <div className='flex flex-col items-center justify-center min-h-[calc(100vh-200px)] text-center p-4'>
         <UserRoundCheck size={64} className='text-primary mb-4' />
@@ -59,6 +68,15 @@ export default async function PaginaDetalheVaga({ params }: { params: Promise<{ 
     notFound();
   }
 
+  let telefoneCandidato: string | null = null;
+  if (auth.userId) {
+    const curriculo = await prisma.curriculo.findUnique({
+      where: { usuarioId: auth.userId },
+      select: { telefone: true },
+    });
+    telefoneCandidato = curriculo?.telefone || null;
+  }
+
   return (
     <div className='max-w-3xl mx-auto bg-card border border-border rounded-lg p-6 sm:p-8 shadow-lg my-8'>
       <div className='flex justify-between items-start mb-6'>
@@ -69,7 +87,11 @@ export default async function PaginaDetalheVaga({ params }: { params: Promise<{ 
           </p>
         </div>
         {vaga.empresa.logoUrl && (
-          <img src={vaga.empresa.logoUrl} alt={vaga.empresa.nome} className='w-20 h-20 rounded-full object-cover shadow-sm' />
+          <img
+            src={vaga.empresa.logoUrl}
+            alt={vaga.empresa.nome}
+            className='w-20 h-20 rounded-full object-cover shadow-sm'
+          />
         )}
       </div>
 
@@ -110,7 +132,9 @@ export default async function PaginaDetalheVaga({ params }: { params: Promise<{ 
       {vaga.empresa.descricao && (
         <section className='mb-6'>
           <h2 className='text-2xl font-bold text-foreground mb-3'>Sobre a Empresa</h2>
-          <p className='text-gray-700 whitespace-pre-line leading-relaxed'>{vaga.empresa.descricao}</p>
+          <p className='text-gray-700 whitespace-pre-line leading-relaxed'>
+            {vaga.empresa.descricao}
+          </p>
           {vaga.empresa.websiteUrl && (
             <p className='mt-2 text-sm text-blue-600 hover:underline'>
               <Link href={vaga.empresa.websiteUrl} target='_blank' rel='noopener noreferrer'>
@@ -125,9 +149,7 @@ export default async function PaginaDetalheVaga({ params }: { params: Promise<{ 
         <Button asChild variant='outline'>
           <Link href='/candidato/vagas'>Voltar para Vagas</Link>
         </Button>
-        <Button variant='default' className='w-full sm:w-auto'>
-          Candidatar-se Agora
-        </Button>
+        <BotaoCandidatura vagaId={vaga.id} telefoneCandidato={telefoneCandidato} />
       </footer>
     </div>
   );
