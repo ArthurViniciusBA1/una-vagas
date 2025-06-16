@@ -10,12 +10,16 @@ import { formatarData } from '@/lib/formatters';
 import { Key } from 'react';
 import { BotaoCandidatura } from '@/components/candidato/BotaoCandidatura';
 
-export default async function PaginaDetalheVaga({
-  params,
-}: {
-  params: Promise<{ vagaId: string }>;
-}) {
-  const { vagaId } = await params;
+// Assinatura de props padronizada para Server Components com parâmetros dinâmicos
+interface PaginaDetalheVagaProps {
+  params: {
+    vagaId: string;
+  };
+}
+
+export default async function PaginaDetalheVaga({ params }: PaginaDetalheVagaProps) {
+  // Acesso direto ao vagaId, sem precisar de 'await'
+  const { vagaId } = params;
 
   const auth = await authorizeUser([RoleUsuario.CANDIDATO, RoleUsuario.ADMIN]);
 
@@ -35,13 +39,16 @@ export default async function PaginaDetalheVaga({
   }
 
   const vaga: any = await prisma.vaga.findUnique({
+    // --- ALTERAÇÃO PRINCIPAL AQUI ---
     where: {
       id: vagaId,
       ativa: true,
-      dataExpiracao: {
-        gte: new Date(),
-      },
+      OR: [
+        { dataExpiracao: null }, // Permite vagas sem data de expiração
+        { dataExpiracao: { gte: new Date() } }, // Ou vagas que ainda não expiraram
+      ],
     },
+    // --- FIM DA ALTERAÇÃO ---
     include: {
       empresa: {
         select: {
