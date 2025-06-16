@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/app/candidato/curriculo/[curriculoId]/CurriculoViewerWithEdit.tsx
 'use client';
 
@@ -16,11 +17,10 @@ import {
   Phone,
   Star,
   User,
-  Pencil,
-  Eye, // Mantenha, se os ícones forem usados em outras partes
+  Pencil, // Mantenha, se os ícones forem usados em outras partes
 } from 'lucide-react';
 import Link from 'next/link';
-import { Prisma, RoleUsuario } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { Badge } from '@/components/ui/badge';
 import { CurriculoSecaoModal } from '@/components/curriculo/modals/CurriculoSecaoModal';
 import { InformacoesPessoaisForm } from '@/components/curriculo/forms/InformacoesPessoaisForm';
@@ -83,7 +83,12 @@ function CurriculoSecao({
         <div className='bg-primary/10 p-2 rounded-full mr-4'>{icon}</div>
         <h2 className='text-2xl font-bold text-primary'>{titulo}</h2>
         {isEditMode && onEditClick && (
-          <Button variant='ghost' size='icon' onClick={onEditClick} className='ml-3 text-gray-500 hover:text-primary'>
+          <Button
+            variant='ghost'
+            size='icon'
+            onClick={onEditClick}
+            className='ml-3 text-gray-500 hover:text-primary'
+          >
             <Pencil size={18} />
           </Button>
         )}
@@ -103,7 +108,14 @@ export default function CurriculoViewerWithEdit({
   const currentCurriculo = curriculo || initialCurriculo;
 
   const [activeModal, setActiveModal] = useState<
-    'infoPessoal' | 'experiencia' | 'formacao' | 'habilidades' | 'idiomas' | 'projetos' | 'certificacoes' | null
+    | 'infoPessoal'
+    | 'experiencia'
+    | 'formacao'
+    | 'habilidades'
+    | 'idiomas'
+    | 'projetos'
+    | 'certificacoes'
+    | null
   >(null);
 
   const handleOpenModal = (modalType: typeof activeModal) => {
@@ -116,7 +128,11 @@ export default function CurriculoViewerWithEdit({
   };
 
   if (!currentCurriculo) {
-    return <div className='text-center text-muted-foreground'>Currículo não encontrado ou carregando...</div>;
+    return (
+      <div className='text-center text-muted-foreground'>
+        Currículo não encontrado ou carregando...
+      </div>
+    );
   }
 
   const isOwner = loggedInUserId === currentCurriculo.usuario.id;
@@ -126,7 +142,9 @@ export default function CurriculoViewerWithEdit({
       <div className='max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6 sm:p-10 my-8'>
         <header className='flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10'>
           <div>
-            <h1 className='text-4xl font-extrabold text-gray-800'>{currentCurriculo.usuario.nome}</h1>
+            <h1 className='text-4xl font-extrabold text-gray-800'>
+              {currentCurriculo.usuario.nome}
+            </h1>
             <p className='text-xl text-primary font-medium mt-1'>{currentCurriculo.titulo}</p>
           </div>
           <div className='text-sm text-gray-600 flex flex-col items-start sm:items-end gap-1.5'>
@@ -185,9 +203,12 @@ export default function CurriculoViewerWithEdit({
                   {exp.nomeEmpresa} • {exp.local}
                 </p>
                 <p className='text-sm text-gray-500 capitalize'>
-                  {formatarData(exp.dataInicio)} - {exp.trabalhoAtual ? 'Presente' : formatarData(exp.dataFim)}
+                  {formatarData(exp.dataInicio)} -{' '}
+                  {exp.trabalhoAtual ? 'Presente' : formatarData(exp.dataFim)}
                 </p>
-                {exp.descricao && <p className='mt-2 text-sm text-gray-600 whitespace-pre-line'>{exp.descricao}</p>}
+                {exp.descricao && (
+                  <p className='mt-2 text-sm text-gray-600 whitespace-pre-line'>{exp.descricao}</p>
+                )}
               </div>
             ))}
           </div>
@@ -205,7 +226,8 @@ export default function CurriculoViewerWithEdit({
                 <h3 className='text-lg font-semibold text-gray-800'>{formacao.curso}</h3>
                 <p className='text-md text-gray-700'>{formacao.instituicao}</p>
                 <p className='text-sm text-gray-500 capitalize'>
-                  {formatarData(formacao.dataInicio)} - {formacao.emCurso ? 'Presente' : formatarData(formacao.dataFim)}
+                  {formatarData(formacao.dataInicio)} -{' '}
+                  {formacao.emCurso ? 'Presente' : formatarData(formacao.dataFim)}
                 </p>
               </div>
             ))}
@@ -236,7 +258,8 @@ export default function CurriculoViewerWithEdit({
           <div className='space-y-2'>
             {currentCurriculo.idiomas.map((idioma) => (
               <p key={idioma.id} className='text-gray-700'>
-                {idioma.nome} - <span className='font-semibold capitalize'>{idioma.nivel.toLowerCase()}</span>
+                {idioma.nome} -{' '}
+                <span className='font-semibold capitalize'>{idioma.nivel.toLowerCase()}</span>
               </p>
             ))}
           </div>
@@ -296,7 +319,11 @@ export default function CurriculoViewerWithEdit({
         </CurriculoSecao>
 
         {activeModal === 'infoPessoal' && (
-          <CurriculoSecaoModal isOpen={true} setIsOpen={handleCloseModal} title='Editar Informações Pessoais'>
+          <CurriculoSecaoModal
+            isOpen={true}
+            setIsOpen={handleCloseModal}
+            title='Editar Informações Pessoais'
+          >
             <InformacoesPessoaisForm setModalOpen={handleCloseModal} />
           </CurriculoSecaoModal>
         )}

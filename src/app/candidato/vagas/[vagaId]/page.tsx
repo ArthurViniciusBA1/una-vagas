@@ -1,12 +1,5 @@
-import {
-  Briefcase,
-  Building2,
-  Calendar,
-  DollarSign,
-  MapPin,
-  Tag,
-  UserRoundCheck,
-} from 'lucide-react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Building2, Calendar, DollarSign, MapPin, Tag, UserRoundCheck } from 'lucide-react';
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -17,8 +10,12 @@ import { formatarData } from '@/lib/formatters';
 import { Key } from 'react';
 import { BotaoCandidatura } from '@/components/candidato/BotaoCandidatura';
 
-export default async function PaginaDetalheVaga({ params }: { params: { vagaId: string } }) {
-  const { vagaId } = params;
+export default async function PaginaDetalheVaga({
+  params,
+}: {
+  params: Promise<{ vagaId: string }>;
+}) {
+  const { vagaId } = await params;
 
   const auth = await authorizeUser([RoleUsuario.CANDIDATO, RoleUsuario.ADMIN]);
 

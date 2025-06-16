@@ -1,36 +1,9 @@
-// src/app/candidato/curriculo/[curriculoId]/page.tsx
-import {
-  Award,
-  Briefcase,
-  FileText,
-  Github,
-  Languages,
-  Lightbulb,
-  Link as LinkIcon,
-  Linkedin,
-  Mail,
-  MapPin,
-  Phone,
-  Star,
-  User,
-  Pencil,
-} from 'lucide-react';
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { cookies } from 'next/headers';
 import { notFound, redirect } from 'next/navigation';
-import { ReactNode } from 'react';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import Link from 'next/link';
 import { Prisma, RoleUsuario } from '@prisma/client';
-import { Badge } from '@/components/ui/badge';
 import { prisma } from '@/lib/prisma';
-import { CurriculoSecaoModal } from '@/components/curriculo/modals/CurriculoSecaoModal';
-import { InformacoesPessoaisForm } from '@/components/curriculo/forms/InformacoesPessoaisForm';
-import { ExperienciaHub } from '@/components/curriculo/management/ExperienciaHub';
-import { FormacaoHub } from '@/components/curriculo/management/FormacaoHub';
-import { HabilidadeHub } from '@/components/curriculo/management/HabilidadeHub';
-import { IdiomaHub } from '@/components/curriculo/management/IdiomaHub';
-import { ProjetoHub } from '@/components/curriculo/management/ProjetoHub';
-import { CertificacaoHub } from '@/components/curriculo/management/CertificacaoHub';
 
 import CurriculoViewerWithEdit from './CurriculoViewerWithEdit';
 
@@ -51,15 +24,6 @@ type CurriculoCompleto = Prisma.CurriculoGetPayload<typeof curriculoQueryArgs>;
 interface TokenPayload extends JwtPayload {
   id: string;
   role?: RoleUsuario;
-}
-
-function formatarData(data: Date | null | undefined): string {
-  if (!data) return '';
-  return new Date(data).toLocaleDateString('pt-BR', {
-    month: 'long',
-    year: 'numeric',
-    timeZone: 'UTC',
-  });
 }
 
 export default async function PaginaVisualizacaoCurriculo({
@@ -103,5 +67,11 @@ export default async function PaginaVisualizacaoCurriculo({
     redirect('/entrar');
   }
 
-  return <CurriculoViewerWithEdit curriculo={curriculo} isEditMode={isEditMode} loggedInUserId={loggedInUserId} />;
+  return (
+    <CurriculoViewerWithEdit
+      curriculo={curriculo}
+      isEditMode={isEditMode}
+      loggedInUserId={loggedInUserId}
+    />
+  );
 }

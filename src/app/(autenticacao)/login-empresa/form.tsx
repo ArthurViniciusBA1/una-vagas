@@ -36,7 +36,11 @@ export default function FormLoginEmpresa() {
       const result = await res.json();
 
       if (!res.ok) {
-        toast.error(result.error?.form || result.error || 'E-mail ou senha inválidos, ou acesso não permitido.');
+        toast.error(
+          result.error?.form ||
+            result.error ||
+            'E-mail ou senha inválidos, ou acesso não permitido.'
+        );
         return;
       }
 
@@ -57,7 +61,13 @@ export default function FormLoginEmpresa() {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <FloatingLabelInput label='E-mail corporativo' id='emailEmpresa' type='email' autoComplete='email' {...field} />
+                <FloatingLabelInput
+                  label='E-mail corporativo'
+                  id='emailEmpresa'
+                  type='email'
+                  autoComplete='email'
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -81,7 +91,12 @@ export default function FormLoginEmpresa() {
             </FormItem>
           )}
         />
-        <Button type='submit' disabled={form.formState.isSubmitting} variant='default' className='w-full cursor-pointer mt-4'>
+        <Button
+          type='submit'
+          disabled={form.formState.isSubmitting}
+          variant='default'
+          className='w-full cursor-pointer mt-4'
+        >
           {form.formState.isSubmitting ? 'Entrando...' : 'Entrar'}
         </Button>
       </form>

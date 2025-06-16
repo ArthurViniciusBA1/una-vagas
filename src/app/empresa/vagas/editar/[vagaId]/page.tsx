@@ -5,13 +5,13 @@ import { fetchVagaForEdit } from '@/actions/vagaActions';
 import { VagaForm } from '@/components/empresa/VagaForm';
 
 interface EditarVagaPageProps {
-  params: {
+  params: Promise<{
     vagaId: string;
-  };
+  }>;
 }
 
 export default async function EditarVagaPage({ params }: EditarVagaPageProps) {
-  const { vagaId } = params;
+  const { vagaId } = await params;
   const result = await fetchVagaForEdit(vagaId);
 
   if (!result.success) {

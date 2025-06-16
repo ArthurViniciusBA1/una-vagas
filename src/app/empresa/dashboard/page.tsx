@@ -1,6 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { BriefcaseBusiness, Users, Building2, LayoutDashboard, Briefcase, Mail, Loader2 } from 'lucide-react';
+import {
+  BriefcaseBusiness,
+  Users,
+  Building2,
+  LayoutDashboard,
+  Briefcase,
+  Mail,
+  Loader2,
+} from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect, useRef } from 'react'; // Adiciona useState, useEffect, useRef

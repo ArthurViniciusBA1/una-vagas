@@ -22,6 +22,7 @@ interface AdminActionResult {
 }
 
 interface ListarResult {
+  data?: any[]; // Agora 'data' é opcional e pode ser um array de qualquer coisa
   success: boolean;
   error?: string;
   items?: any[];

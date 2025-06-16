@@ -5,23 +5,25 @@ import { listarTodosUsuariosAction, listarTodasEmpresasAction } from '@/actions/
 import { UserManagementClient } from '@/components/admin/UserManagementClient';
 
 interface AdminUsuariosPageProps {
-  searchParams: {
+  searchParams: Promise<{
     page?: string;
     query?: string;
     role?: string;
     status?: string;
-  };
+  }>;
 }
 
 export default async function AdminUsuariosPage({ searchParams }: AdminUsuariosPageProps) {
-  const page = Number(searchParams.page) || 1;
-  const query = searchParams.query || '';
+  const page = Number((await searchParams).page) || 1;
+  const query = (await searchParams).query || '';
   const role =
-    searchParams.role === 'TODOS' || !searchParams.role
+    (await searchParams).role === 'TODOS' || !(await searchParams).role
       ? undefined
-      : (searchParams.role as RoleUsuario);
+      : ((await searchParams).role as RoleUsuario);
   const status =
-    searchParams.status === 'TODOS' || !searchParams.status ? undefined : searchParams.status;
+    (await searchParams).status === 'TODOS' || !(await searchParams).status
+      ? undefined
+      : (await searchParams).status;
 
   // Busca os dados no servidor antes de renderizar
   const resultUsuarios = await listarTodosUsuariosAction({ page, query, role, status });
