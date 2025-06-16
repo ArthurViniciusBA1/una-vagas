@@ -1,21 +1,21 @@
 @import 'tailwindcss';
 
 @theme {
-  /* Cores Base da Aplicação (Light Theme) */
   --color-background: rgb(233, 235, 238);
   --color-foreground: rgb(31, 41, 55);
 
   --color-primary: rgb(152, 0, 238);
   --color-primary-foreground: rgb(255, 255, 255);
 
-  /* Cards e Popovers */
+  --color-secondary: rgb(152, 0, 160);
+  --color-secondary-foreground: rgb(255, 255, 255);
+
   --color-card: rgb(255, 255, 255);
   --color-card-foreground: var(--color-foreground);
 
   --color-popover: var(--color-card);
   --color-popover-foreground: var(--color-card-foreground);
 
-  /* Bordas e Inputs */
   --color-border: rgb(229, 231, 235);
   --color-input-border: var(--color-border);
 
@@ -36,30 +36,6 @@
 
   /* Raio da Borda (Radius) */
   --radius: 0.5rem;
-}
-
-/* Tema Escuro (se você for implementar) */
-
-.dark {
-  --color-background: rgb(17, 24, 39);
-  --color-foreground: rgb(229, 231, 235);
-  --color-primary: rgb(196, 122, 245);
-  --color-primary-foreground: rgb(17, 24, 39);
-  --color-card: rgb(31, 41, 55);
-  --color-card-foreground: var(--color-foreground);
-  --color-popover: var(--color-card);
-  --color-popover-foreground: var(--color-card-foreground);
-  --color-border: rgb(55, 65, 81);
-  --color-input-border: var(--color-border);
-  --color-ring: rgb(166, 77, 255);
-  --color-secondary: rgb(75, 85, 99);
-  --color-secondary-foreground: rgb(229, 231, 235);
-  --color-muted: rgb(55, 65, 81);
-  --color-muted-foreground: rgb(156, 163, 175);
-  --color-accent: var(--color-primary);
-  --color-accent-foreground: var(--color-primary-foreground);
-  --color-destructive: rgb(153, 27, 27);
-  --color-destructive-foreground: rgb(229, 231, 235);
 }
 
 body {

@@ -1,7 +1,17 @@
 // src/app/candidato/candidaturas/page.tsx
 'use client'; // <-- TRANSFORMA EM CLIENT COMPONENT
 
-import { FileText, BriefcaseBusiness, Ban, CheckCircle2, Eye, Hourglass, XCircle, ListTodo, Loader2 } from 'lucide-react';
+import {
+  FileText,
+  BriefcaseBusiness,
+  Ban,
+  CheckCircle2,
+  Eye,
+  Hourglass,
+  XCircle,
+  ListTodo,
+  Loader2,
+} from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 // Removida a importação desnecessária de Candidatura se não for usada diretamente
@@ -11,7 +21,13 @@ import { Badge } from '@/components/ui/badge';
 import { JSX, useState, useEffect, useTransition, useRef } from 'react'; // Adiciona useState, useEffect, useTransition, useRef
 import { useSearchParams, useRouter } from 'next/navigation'; // Adiciona useSearchParams, useRouter
 import { fetchUserCandidaturas } from '@/actions/candidaturaActions'; // Importa a Server Action
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { toast } from 'sonner';
 import { Prisma } from '@prisma/client'; // Importa Prisma para a tipagem explícita
 
@@ -36,7 +52,9 @@ const candidaturaComDetalhesArgs = Prisma.validator<Prisma.CandidaturaDefaultArg
   },
 });
 
-export type CandidaturaComDetalhes = Prisma.CandidaturaGetPayload<typeof candidaturaComDetalhesArgs>;
+export type CandidaturaComDetalhes = Prisma.CandidaturaGetPayload<
+  typeof candidaturaComDetalhesArgs
+>;
 
 // Helper para mapear status de candidatura para cores de badge
 const getStatusBadgeVariant = (
@@ -151,7 +169,11 @@ export default function PaginaMinhasCandidaturas() {
         <p className='text-lg font-semibold'>{error}</p>
         <p className='mt-4 text-center'>
           Por favor, tente{' '}
-          <Button variant='link' onClick={() => loadCandidaturas(currentStatusFilter)} className='p-0 h-auto underline'>
+          <Button
+            variant='link'
+            onClick={() => loadCandidaturas(currentStatusFilter)}
+            className='p-0 h-auto underline'
+          >
             novamente
           </Button>
           .
@@ -165,7 +187,11 @@ export default function PaginaMinhasCandidaturas() {
       <div className='col-span-full text-center text-muted-foreground py-12'>
         <p className='text-xl'>Não foi possível carregar suas candidaturas. Tente novamente.</p>
         <p className='mt-2 text-sm'>
-          <Button variant='link' onClick={() => loadCandidaturas(currentStatusFilter)} className='p-0 h-auto underline'>
+          <Button
+            variant='link'
+            onClick={() => loadCandidaturas(currentStatusFilter)}
+            className='p-0 h-auto underline'
+          >
             Recarregar
           </Button>
         </p>
@@ -179,7 +205,9 @@ export default function PaginaMinhasCandidaturas() {
         <h1 className='text-3xl md:text-4xl font-bold text-foreground flex items-center gap-3'>
           <FileText size={32} /> Minhas Candidaturas
         </h1>
-        <p className='text-lg text-muted-foreground mt-1'>Acompanhe o status das suas inscrições em vagas.</p>
+        <p className='text-lg text-muted-foreground mt-1'>
+          Acompanhe o status das suas inscrições em vagas.
+        </p>
       </header>
 
       <div className='mb-6 flex justify-end'>
@@ -212,7 +240,9 @@ export default function PaginaMinhasCandidaturas() {
         ) : (
           candidaturas.map((candidatura: any) => {
             const statusInfo = getStatusBadgeVariant(candidatura.status);
-            const vagaExpirada = candidatura.vaga.dataExpiracao && new Date(candidatura.vaga.dataExpiracao) < new Date();
+            const vagaExpirada =
+              candidatura.vaga.dataExpiracao &&
+              new Date(candidatura.vaga.dataExpiracao) < new Date();
 
             return (
               <div
@@ -259,7 +289,10 @@ export default function PaginaMinhasCandidaturas() {
                   <Button asChild size='sm'>
                     <Link href={`/candidato/vagas/${candidatura.vaga.id}`}>Ver Vaga</Link>
                   </Button>
-                  <Badge variant={statusInfo.variant} className='capitalize text-sm font-semibold whitespace-nowrap'>
+                  <Badge
+                    variant={statusInfo.variant}
+                    className='capitalize text-sm font-semibold whitespace-nowrap'
+                  >
                     {statusInfo.icon}
                     {candidatura.status.replace(/_/g, ' ')}
                   </Badge>

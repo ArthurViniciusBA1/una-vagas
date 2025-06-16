@@ -62,6 +62,7 @@ model Usuario {
   curriculo       Curriculo? @relation("DonoDoCurriculo")
   empresaId       String?
   empresa         Empresa?   @relation("RecrutadoresDaEmpresa", fields: [empresaId], references: [id])
+  Empresa         Empresa[]  @relation(name: "EmpresaCadastradaPorAdmin")
   candidaturas    Candidatura[] @relation("CandidatoAplicou")
   vagasCriadas    Vaga[]     @relation("CriadorDaVaga")
 
@@ -69,7 +70,6 @@ model Usuario {
   atualizadoEm    DateTime   @updatedAt
 
   @@map("usuarios")
-  Empresa Empresa[] @relation(name: "EmpresaCadastradaPorAdmin")
 }
 
 model Empresa {

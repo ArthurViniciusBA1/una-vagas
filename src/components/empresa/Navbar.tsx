@@ -1,11 +1,10 @@
-// src/components/empresa/EmpresaNavbar.tsx
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LayoutDashboard, BriefcaseBusiness, Users, Building2 } from 'lucide-react';
-import { Button } from '@/components/ui/button'; // Certifique-se de que o Button está importado
-import { LogoutButton } from '@/components/auth/LogoutButton'; // Importa o LogoutButton
+import { Button } from '@/components/ui/button';
+import { LogoutButton } from '@/components/auth/LogoutButton';
 
 export function EmpresaNavbar() {
   const pathname = usePathname();
@@ -14,7 +13,7 @@ export function EmpresaNavbar() {
     { href: '/empresa/dashboard', label: 'Painel', icon: LayoutDashboard },
     { href: '/empresa/vagas', label: 'Minhas Vagas', icon: BriefcaseBusiness },
     { href: '/empresa/candidaturas', label: 'Candidaturas', icon: Users },
-    { href: '/empresa/perfil-empresa', label: 'Perfil Empresa', icon: Building2 }, // Exemplo de link
+    { href: '/empresa/perfil-empresa', label: 'Perfil Empresa', icon: Building2 },
   ];
 
   return (
@@ -29,7 +28,7 @@ export function EmpresaNavbar() {
               <Button
                 key={link.href}
                 asChild
-                variant={pathname === link.href ? 'secondary' : 'ghost'} // Estiliza o botão da página atual
+                variant={pathname === link.href ? 'secondary' : 'ghost'}
                 size='sm'
                 className='px-2 md:px-3'
               >
@@ -40,7 +39,7 @@ export function EmpresaNavbar() {
               </Button>
             ))}
           </div>
-          <LogoutButton variant='outline' size='sm' className='hover:bg-destructive' /> {/* Botão de Logout */}
+          <LogoutButton variant='outline' size='sm' className='hover:bg-destructive' />
         </div>
       </div>
     </nav>

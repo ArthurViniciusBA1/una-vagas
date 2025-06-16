@@ -1,23 +1,35 @@
 'use client';
 
-import { BriefcaseBusiness, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  EyeOff,
+  Loader2,
+  Pencil,
+  PlusCircle,
+} from 'lucide-react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { formatarData } from '@/lib/formatters';
-import { useState, useEffect, useTransition, useRef } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { fetchAvailableVagas, VagaWithEmpresa } from '@/actions/vagaActions';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
-export default function PaginaListagemVagas() {
+import { fetchCompanyVagas, toggleVagaStatusAction } from '@/actions/vagaActions';
+import { Button } from '@/components/ui/button';
+import { formatarData } from '@/lib/formatters';
+
+export default function PaginaMinhasVagasEmpresa() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
+
   const [vagas, setVagas] = useState<any[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [totalVagas, setTotalVagas] = useState(0);
+
   const ignoreStrictDoubleRender = useRef(false);
+
   const currentPage = parseInt(searchParams.get('page') || '1');
   const limitPerPage = parseInt(searchParams.get('limit') || '9');
 
@@ -27,7 +39,7 @@ export default function PaginaListagemVagas() {
     const toastId = toast.loading('Carregando vagas...');
 
     try {
-      const result = await fetchAvailableVagas({ page, limit });
+      const result = await fetchCompanyVagas({ page, limit });
 
       if (result.success) {
         setVagas(result.vagas || []);
@@ -58,13 +70,39 @@ export default function PaginaListagemVagas() {
     startTransition(() => {
       const newSearchParams = new URLSearchParams(searchParams.toString());
       newSearchParams.set('page', newPage.toString());
-      router.push(`/candidato/vagas?${newSearchParams.toString()}`);
+      router.push(`/empresa/vagas?${newSearchParams.toString()}`);
     });
   };
 
   const totalPages = Math.ceil(totalVagas / limitPerPage);
   const hasPreviousPage = currentPage > 1;
   const hasNextPage = currentPage < totalPages;
+
+  const handleEditVaga = (vagaId: string) => {
+    router.push(`/empresa/vagas/editar/${vagaId}`);
+  };
+
+  const handleToggleActive = (vagaId: string, currentStatus: boolean) => {
+    const action = currentStatus ? 'Inativando' : 'Ativando';
+    const toastId = toast.loading(`${action} vaga...`);
+
+    startTransition(async () => {
+      const result = await toggleVagaStatusAction(vagaId, !currentStatus);
+
+      if (result.success) {
+        toast.success(`Vaga ${currentStatus ? 'inativada' : 'ativada'} com sucesso!`, {
+          id: toastId,
+        });
+        setVagas((prevVagas) =>
+          (prevVagas || []).map((vaga) =>
+            vaga.id === vagaId ? { ...vaga, ativa: !currentStatus } : vaga
+          )
+        );
+      } else {
+        toast.error(result.error || `Falha ao ${action.toLowerCase()} a vaga.`, { id: toastId });
+      }
+    });
+  };
 
   if (isLoading) {
     return (
@@ -115,18 +153,28 @@ export default function PaginaListagemVagas() {
     <div className='w-full'>
       <header className='mb-8 md:mb-10'>
         <h1 className='text-3xl md:text-4xl font-bold text-foreground flex items-center gap-3'>
-          <BriefcaseBusiness size={32} /> Vagas Disponíveis
+          Minhas Vagas
         </h1>
         <p className='text-lg text-muted-foreground mt-1'>
-          Explore as oportunidades que esperam por você.
+          Gerencie as vagas publicadas pela sua empresa.
         </p>
+        <Button asChild className='mt-4'>
+          <Link href='/empresa/vagas/criar-vaga'>
+            <PlusCircle size={18} className='mr-2' /> Nova Vaga
+          </Link>
+        </Button>
       </header>
 
       <section className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
         {vagas.length === 0 ? (
           <div className='col-span-full text-center text-muted-foreground py-12'>
-            <p className='text-xl'>Nenhuma vaga disponível no momento.</p>
-            <p className='mt-2 text-sm'>Verifique novamente mais tarde ou ajuste seus filtros.</p>
+            <p className='text-xl'>Nenhuma vaga encontrada.</p>
+            <p className='mt-2 text-sm'>
+              <Link href='/empresa/vagas/criar-vaga' className='text-primary underline'>
+                Publique sua primeira vaga
+              </Link>{' '}
+              agora!
+            </p>
           </div>
         ) : (
           vagas.map((vaga: any) => (
@@ -153,7 +201,8 @@ export default function PaginaListagemVagas() {
               <p className='text-foreground text-sm mb-3 line-clamp-3'>{vaga.descricao}</p>
               <div className='text-sm text-gray-600 mb-3'>
                 <p>
-                  <strong>Tipo:</strong> {vaga.tipo.replace(/_/g, ' ').toLowerCase()}
+                  <strong>Tipo:</strong>{' '}
+                  <span className='capitalize'>{vaga.tipo.replace(/_/g, ' ').toLowerCase()}</span>
                 </p>
                 <p>
                   <strong>Local:</strong> {vaga.localizacao}
@@ -167,9 +216,29 @@ export default function PaginaListagemVagas() {
 
               <div className='mt-auto flex justify-between items-center text-xs text-muted-foreground pt-4 border-t border-border'>
                 <span>Publicado em: {formatarData(vaga.dataPublicacao)}</span>
-                <Button asChild size='sm'>
-                  <Link href={`/candidato/vagas/${vaga.id}`}>Ver Detalhes</Link>
-                </Button>
+                <div className='flex gap-1'>
+                  <Button
+                    variant='ghost'
+                    size='icon'
+                    onClick={() => handleEditVaga(vaga.id)}
+                    disabled={isPending}
+                  >
+                    <Pencil size={16} />
+                  </Button>
+                  <Button
+                    variant='ghost'
+                    size='icon'
+                    onClick={() => handleToggleActive(vaga.id, vaga.ativa)}
+                    disabled={isPending}
+                    className={
+                      vaga.ativa
+                        ? 'text-destructive hover:text-destructive'
+                        : 'text-green-600 hover:text-green-700'
+                    }
+                  >
+                    {vaga.ativa ? <EyeOff size={16} /> : <CheckCircle2 size={16} />}
+                  </Button>
+                </div>
               </div>
             </div>
           ))

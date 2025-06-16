@@ -1,14 +1,11 @@
-// src/actions/vagaActions.ts
 'use server';
 
-import { Prisma, RoleUsuario, TipoVaga } from '@prisma/client';
+import { Prisma, RoleUsuario } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { authorizeUser } from '@/lib/auth.server';
 import { revalidatePath } from 'next/cache';
-import { z } from 'zod';
-import { vagaFormSchema, tVagaForm } from '@/schemas/vagaSchema';
+import { vagaFormSchema } from '@/schemas/vagaSchema';
 
-// Tipo para a vaga com a empresa incluída (mantido, mas não será usado para 'vagas' no FetchVagasResult)
 const vagaWithEmpresaArgs = Prisma.validator<Prisma.VagaDefaultArgs>()({
   include: {
     empresa: {
@@ -22,11 +19,10 @@ const vagaWithEmpresaArgs = Prisma.validator<Prisma.VagaDefaultArgs>()({
 
 export type VagaWithEmpresa = Prisma.VagaGetPayload<typeof vagaWithEmpresaArgs>;
 
-// Tipos para as Server Actions
 interface FetchVagasResult {
   success: boolean;
   error?: string;
-  vagas?: any[]; // <--- TIPADO COMO 'any[]' AQUI
+  vagas?: any[];
   totalVagas?: number;
 }
 
@@ -34,29 +30,39 @@ interface FetchVagasParams {
   page?: number;
   limit?: number;
   status?: string;
-  // Adicione outros filtros aqui (ex: tipo, localizacao, termo de busca)
 }
 
 interface SaveVagaResult {
   success: boolean;
   error?: string;
-  vaga?: Prisma.VagaGetPayload<{}>; // Retorna a vaga salva
+  vaga?: Prisma.VagaGetPayload<{}>;
 }
 
-/**
- * Busca as vagas disponíveis para candidatos com filtros e paginação.
- * Esta é uma Server Action protegida.
- * @param params Parâmetros de paginação e filtro.
- * @returns Um objeto com sucesso, vagas e/ou erro.
- */
-export async function fetchAvailableVagas(params: FetchVagasParams = {}): Promise<FetchVagasResult> {
+interface FetchVagaForEditResult {
+  success: boolean;
+  error?: string;
+  vaga?: any;
+}
+
+interface ToggleStatusResult {
+  success: boolean;
+  error?: string;
+  vaga?: Prisma.VagaGetPayload<{}>;
+}
+
+export async function fetchAvailableVagas(
+  params: FetchVagasParams = {}
+): Promise<FetchVagasResult> {
   const { page = 1, limit = 9 } = params;
   const skip = (page - 1) * limit;
 
   const { isAuthorized } = await authorizeUser([RoleUsuario.CANDIDATO, RoleUsuario.ADMIN]);
 
   if (!isAuthorized) {
-    return { success: false, error: 'Acesso Negado. Faça login como Candidato para visualizar as vagas.' };
+    return {
+      success: false,
+      error: 'Acesso Negado. Faça login como Candidato para visualizar as vagas.',
+    };
   }
 
   try {
@@ -88,8 +94,6 @@ export async function fetchAvailableVagas(params: FetchVagasParams = {}): Promis
         where: whereClause,
       }),
     ]);
-
-    // O retorno ainda corresponderá a FetchVagasResult, com 'vagas' sendo 'any[]'
     return { success: true, vagas, totalVagas };
   } catch (e) {
     console.error('Erro ao buscar vagas na Server Action:', e);
@@ -97,81 +101,99 @@ export async function fetchAvailableVagas(params: FetchVagasParams = {}): Promis
   }
 }
 
-/**
- * Salva ou atualiza uma vaga.
- * @param data Os dados da vaga do formulário.
- * @returns Um objeto com sucesso e a vaga salva, ou erro.
- */
 export async function saveVagaAction(formData: any): Promise<SaveVagaResult> {
-  const { isAuthorized, userId, role } = await authorizeUser([RoleUsuario.RECRUTADOR, RoleUsuario.ADMIN]);
+  const { isAuthorized, userId, role } = await authorizeUser([
+    RoleUsuario.RECRUTADOR,
+    RoleUsuario.ADMIN,
+  ]);
 
-  if (!isAuthorized || !userId || (role !== RoleUsuario.RECRUTADOR && role !== RoleUsuario.ADMIN)) {
+  if (!isAuthorized || !userId) {
     return { success: false, error: 'Não autorizado para criar/editar vagas.' };
   }
 
-  let empresaIdParaVaga: string | undefined;
-  // Se o usuário é recrutador, ele deve ter uma empresa vinculada e a vaga será para essa empresa
-  if (role === RoleUsuario.RECRUTADOR) {
-    const usuarioRecrutador = await prisma.usuario.findUnique({
+  const validation = vagaFormSchema.safeParse(formData);
+  if (!validation.success) {
+    return {
+      success: false,
+      error: validation.error.errors.map((e) => e.message).join(', ') || 'Dados inválidos.',
+    };
+  }
+
+  const { id, requisitos, dataExpiracao, ...rest } = validation.data;
+
+  try {
+    let empresaIdParaVaga: string | undefined | null = null;
+    const usuarioLogado = await prisma.usuario.findUnique({
       where: { id: userId },
       select: { empresaId: true },
     });
-    if (!usuarioRecrutador?.empresaId) {
-      return { success: false, error: 'Seu usuário de recrutador não está vinculado a uma empresa.' };
-    }
-    empresaIdParaVaga = usuarioRecrutador.empresaId;
-  } else if (role === RoleUsuario.ADMIN) {
-    // Se for ADMIN, o empresaId deve vir do formulário
-    if (!formData.empresaId) {
-      return { success: false, error: 'Administradores devem especificar a empresa da vaga.' };
-    }
-    empresaIdParaVaga = formData.empresaId;
-  }
 
-  try {
-    const validation = vagaFormSchema.safeParse(formData);
-    if (!validation.success) {
-      return {
-        success: false,
-        error: validation.error.errors.map((e) => e.message).join(', ') || 'Dados inválidos.',
-      };
+    if (role === RoleUsuario.RECRUTADOR) {
+      empresaIdParaVaga = usuarioLogado?.empresaId;
+    } else if (role === RoleUsuario.ADMIN) {
+      if (id) {
+        const vagaExistente = await prisma.vaga.findUnique({
+          where: { id },
+          select: { empresaId: true },
+        });
+        empresaIdParaVaga = vagaExistente?.empresaId;
+      } else {
+        empresaIdParaVaga = formData.empresaId;
+      }
     }
 
-    const { id, requisitos, dataExpiracao, ...rest } = validation.data;
+    if (!empresaIdParaVaga) {
+      const errorMessage =
+        role === RoleUsuario.RECRUTADOR
+          ? 'Seu usuário de recrutador não está vinculado a uma empresa.'
+          : 'Não foi possível determinar a empresa para esta vaga. Se for admin, certifique-se de fornecê-la.';
+      return { success: false, error: errorMessage };
+    }
 
     const requisitosArray = requisitos
-      .split(',')
-      .map((req: any) => req.trim())
-      .filter((req: any) => req.length > 0);
-    const dataExpiracaoDate = dataExpiracao ? new Date(dataExpiracao) : null;
+      .split(/[\n,]+/)
+      .map((req: string) => req.trim())
+      .filter((req: string) => req.length > 0);
+    const dataExpiracaoDate = dataExpiracao ? new Date(`${dataExpiracao}T23:59:59Z`) : null;
 
-    const vagaData = {
+    const vagaDataParaUpdate = {
       ...rest,
       requisitos: requisitosArray,
       dataExpiracao: dataExpiracaoDate,
-      empresaId: empresaIdParaVaga!,
-      criadoPorId: userId,
-      dataPublicacao: new Date(),
+      empresaId: empresaIdParaVaga,
     };
 
-    const vaga = id
-      ? await prisma.vaga.update({
-          where: { id },
-          data: vagaData,
-        })
-      : await prisma.vaga.create({
-          data: vagaData,
+    const vagaDataParaCreate = {
+      ...vagaDataParaUpdate,
+      dataPublicacao: new Date(),
+      criadoPorId: userId,
+    };
+
+    let vaga;
+    if (id) {
+      if (role === RoleUsuario.RECRUTADOR) {
+        const vagaExistente = await prisma.vaga.findFirst({
+          where: { id: id, empresaId: empresaIdParaVaga },
         });
+        if (!vagaExistente) {
+          return { success: false, error: 'Você não tem permissão para editar esta vaga.' };
+        }
+      }
+      vaga = await prisma.vaga.update({ where: { id }, data: vagaDataParaUpdate });
+    } else {
+      vaga = await prisma.vaga.create({
+        data: vagaDataParaCreate,
+      });
+    }
 
     revalidatePath('/empresa/dashboard');
     revalidatePath('/empresa/vagas');
-    revalidatePath(`/candidato/vagas`);
+    revalidatePath('/candidato/vagas');
     revalidatePath(`/candidato/vagas/${vaga.id}`);
 
     return { success: true, vaga };
   } catch (e) {
     console.error('Erro ao salvar vaga:', e);
-    // Erros de validação do Zod já são tratados acima. Aqui seriam erros de banco/servidor.
     return {
       success: false,
       error: e instanceof Error ? e.message : 'Ocorreu um erro ao salvar a vaga.',
@@ -179,45 +201,40 @@ export async function saveVagaAction(formData: any): Promise<SaveVagaResult> {
   }
 }
 
-/**
- * Busca as vagas de uma empresa específica (do recrutador logado ou selecionada pelo admin).
- * @param params Parâmetros de paginação e filtro.
- * @returns Um objeto com sucesso, vagas e/ou erro.
- */
 export async function fetchCompanyVagas(params: FetchVagasParams = {}): Promise<FetchVagasResult> {
   const { page = 1, limit = 9 } = params;
   const skip = (page - 1) * limit;
 
-  const { isAuthorized, userId, role } = await authorizeUser([RoleUsuario.RECRUTADOR, RoleUsuario.ADMIN]);
+  const { isAuthorized, userId, role } = await authorizeUser([
+    RoleUsuario.RECRUTADOR,
+    RoleUsuario.ADMIN,
+  ]);
 
   if (!isAuthorized || !userId) {
     return { success: false, error: 'Não autorizado para ver vagas da empresa.' };
   }
 
   let targetEmpresaId: string | null = null;
-  // Se for recrutador, pega o empresaId dele
   if (role === RoleUsuario.RECRUTADOR) {
     const usuarioRecrutador = await prisma.usuario.findUnique({
       where: { id: userId },
       select: { empresaId: true },
     });
     if (!usuarioRecrutador?.empresaId) {
-      return { success: false, error: 'Seu usuário de recrutador não está vinculado a uma empresa.' };
+      return {
+        success: false,
+        error: 'Seu usuário de recrutador não está vinculado a uma empresa.',
+      };
     }
     targetEmpresaId = usuarioRecrutador.empresaId;
-  } else if (role === RoleUsuario.ADMIN) {
-    // Se for admin, pode ver todas as vagas, ou filtrar por uma empresa específica se for passado no params
-    // Por simplicidade, se o admin não especificar, mostra todas.
-    // Futuramente: admin pode selecionar empresa no filtro da UI.
   }
 
   try {
-    const whereClause: Prisma.VagaWhereInput = {};
+    const whereClause: any = {};
 
     if (targetEmpresaId) {
       whereClause.empresaId = targetEmpresaId;
     }
-    // Futuramente, adicione filtros aqui com base em params (ex: status, termo de busca)
 
     const [vagas, totalVagas] = await prisma.$transaction([
       prisma.vaga.findMany({
@@ -240,11 +257,108 @@ export async function fetchCompanyVagas(params: FetchVagasParams = {}): Promise<
         where: whereClause,
       }),
     ]);
-
-    // O retorno ainda corresponderá a FetchVagasResult, com 'vagas' sendo 'any[]'
     return { success: true, vagas, totalVagas };
   } catch (e) {
     console.error('Erro ao buscar vagas da empresa na Server Action:', e);
     return { success: false, error: 'Ocorreu um erro ao buscar as vagas da empresa.' };
+  }
+}
+
+export async function fetchVagaForEdit(vagaId: string): Promise<FetchVagaForEditResult> {
+  const { isAuthorized, userId, role } = await authorizeUser([
+    RoleUsuario.RECRUTADOR,
+    RoleUsuario.ADMIN,
+  ]);
+
+  if (!isAuthorized || !userId) {
+    return { success: false, error: 'Acesso negado.' };
+  }
+
+  try {
+    const vaga = await prisma.vaga.findUnique({
+      where: { id: vagaId },
+    });
+
+    if (!vaga) {
+      return { success: false, error: 'Vaga não encontrada.' };
+    }
+
+    if (role === RoleUsuario.RECRUTADOR) {
+      const usuario = await prisma.usuario.findUnique({
+        where: { id: userId },
+        select: { empresaId: true },
+      });
+      if (vaga.empresaId !== usuario?.empresaId) {
+        return { success: false, error: 'Você não tem permissão para editar esta vaga.' };
+      }
+    }
+
+    const dataFormatada = vaga.dataExpiracao ? vaga.dataExpiracao.toISOString().split('T')[0] : '';
+    const requisitosString = vaga.requisitos.join(', \n');
+
+    return {
+      success: true,
+      vaga: {
+        ...vaga,
+        dataExpiracao: dataFormatada,
+        requisitos: requisitosString,
+      },
+    };
+  } catch (error) {
+    console.error('Erro ao buscar vaga para edição:', error);
+    return { success: false, error: 'Ocorreu um erro no servidor.' };
+  }
+}
+
+export async function toggleVagaStatusAction(
+  vagaId: string,
+  novoStatus: boolean
+): Promise<ToggleStatusResult> {
+  const { isAuthorized, userId, role } = await authorizeUser([
+    RoleUsuario.RECRUTADOR,
+    RoleUsuario.ADMIN,
+  ]);
+
+  if (!isAuthorized || !userId) {
+    return { success: false, error: 'Acesso negado.' };
+  }
+
+  try {
+    if (role === RoleUsuario.RECRUTADOR) {
+      const usuario = await prisma.usuario.findUnique({
+        where: { id: userId },
+        select: { empresaId: true },
+      });
+
+      if (!usuario?.empresaId) {
+        return {
+          success: false,
+          error: 'Seu usuário de recrutador não está vinculado a uma empresa.',
+        };
+      }
+
+      const vaga = await prisma.vaga.findFirst({
+        where: { id: vagaId, empresaId: usuario?.empresaId },
+      });
+      if (!vaga) {
+        return { success: false, error: 'Você não tem permissão para alterar esta vaga.' };
+      }
+    }
+
+    const vagaAtualizada = await prisma.vaga.update({
+      where: { id: vagaId },
+      data: { ativa: novoStatus },
+    });
+
+    revalidatePath('/empresa/vagas');
+    revalidatePath('/empresa/dashboard');
+
+    return { success: true, vaga: vagaAtualizada };
+  } catch (error) {
+    console.error('Erro ao alterar status da vaga:', error);
+    return {
+      success: false,
+      error: 'Ocorreu um erro no servidor ao tentar alterar o status da vaga.',
+    };
   }
 }
