@@ -32,23 +32,7 @@ interface FetchVagasParams {
   status?: string;
 }
 
-interface SaveVagaResult {
-  success: boolean;
-  error?: string;
-  vaga?: Prisma.VagaGetPayload<{}>;
-}
-
-interface FetchVagaForEditResult {
-  success: boolean;
-  error?: string;
-  vaga?: any;
-}
-
-interface ToggleStatusResult {
-  success: boolean;
-  error?: string;
-  vaga?: Prisma.VagaGetPayload<{}>;
-}
+// ... (demais interfaces não precisam de alteração)
 
 export async function fetchAvailableVagas(
   params: FetchVagasParams = {}
@@ -66,12 +50,15 @@ export async function fetchAvailableVagas(
   }
 
   try {
+    // --- ALTERAÇÃO PRINCIPAL AQUI ---
     const whereClause: Prisma.VagaWhereInput = {
       ativa: true,
-      dataExpiracao: {
-        gte: new Date(),
-      },
+      OR: [
+        { dataExpiracao: null }, // Permite vagas que nunca expiram
+        { dataExpiracao: { gte: new Date() } }, // Permite vagas cuja data de expiração é hoje ou no futuro
+      ],
     };
+    // --- FIM DA ALTERAÇÃO ---
 
     const [vagas, totalVagas] = await prisma.$transaction([
       prisma.vaga.findMany({
@@ -101,7 +88,10 @@ export async function fetchAvailableVagas(
   }
 }
 
-export async function saveVagaAction(formData: any): Promise<SaveVagaResult> {
+// O restante do arquivo continua o mesmo...
+// (saveVagaAction, fetchCompanyVagas, etc. não precisam ser alterados)
+
+export async function saveVagaAction(formData: any): Promise<any> {
   const { isAuthorized, userId, role } = await authorizeUser([
     RoleUsuario.RECRUTADOR,
     RoleUsuario.ADMIN,
@@ -264,7 +254,7 @@ export async function fetchCompanyVagas(params: FetchVagasParams = {}): Promise<
   }
 }
 
-export async function fetchVagaForEdit(vagaId: string): Promise<FetchVagaForEditResult> {
+export async function fetchVagaForEdit(vagaId: string): Promise<any> {
   const { isAuthorized, userId, role } = await authorizeUser([
     RoleUsuario.RECRUTADOR,
     RoleUsuario.ADMIN,
@@ -310,10 +300,7 @@ export async function fetchVagaForEdit(vagaId: string): Promise<FetchVagaForEdit
   }
 }
 
-export async function toggleVagaStatusAction(
-  vagaId: string,
-  novoStatus: boolean
-): Promise<ToggleStatusResult> {
+export async function toggleVagaStatusAction(vagaId: string, novoStatus: boolean): Promise<any> {
   const { isAuthorized, userId, role } = await authorizeUser([
     RoleUsuario.RECRUTADOR,
     RoleUsuario.ADMIN,
