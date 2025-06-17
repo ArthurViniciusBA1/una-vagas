@@ -1,4 +1,4 @@
-# UNA Vagas
+# UNI Vagas
 
 Um sistema moderno de gerenciamento de vagas desenvolvido com Next.js, TypeScript e Prisma.
 
@@ -6,12 +6,12 @@ Um sistema moderno de gerenciamento de vagas desenvolvido com Next.js, TypeScrip
 
 A aplicação está disponível para visualização e teste no seguinte link:
 
-**URL:** [https://una-vagas.vercel.app/](https://una-vagas.vercel.app/)
+**URL:** [Uni Vagas](https://univagas.vercel.app/)
 
 #### **Perfil: Candidato**
 
 - **Como acessar:** A melhor forma de testar é criando seu próprio usuário.
-- **Página de Cadastro:** [https://una-vagas.vercel.app/cadastro](https://una-vagas.vercel.app/cadastro)
+- **Página de Cadastro:** [Cadastrar-se](https://univagas.vercel.app/cadastro)
 - **Observação:** Lembre-se que este é um ambiente de demonstração. **Não utilize dados ou senhas reais**.
 
 ## 🚀 Sobre o Projeto
@@ -48,8 +48,8 @@ Antes de começar, certifique-se de ter instalado:
 1. **Clone o repositório**
 
    ```bash
-   git clone https://github.com/ArthurViniciusBA1/una-vagas.git
-   cd una-vagas
+   git clone https://github.com/ArthurViniciusBA1/uni-vagas.git
+   cd uni-vagas
    ```
 
 2. **Instale as dependências**
@@ -101,7 +101,7 @@ Antes de começar, certifique-se de ter instalado:
 ## 📁 Estrutura do Projeto
 
 ```md
-una-vagas/
+uni-vagas/
 ├── prisma/              # Esquemas e migrações do banco
 ├── public/              # Arquivos estáticos
 ├── src/
