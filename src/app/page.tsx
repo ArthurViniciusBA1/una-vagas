@@ -10,7 +10,7 @@ export default function HomePage() {
       <main className='flex w-full h-dvh flex-grow flex-col items-center justify-center p-4 md:p-6'>
         <div className='flex flex-col items-center text-center gap-10 md:gap-12'>
           <div className='flex flex-col gap-6 md:gap-8 items-center'>
-            <Image src={'/LogoUNA.png'} width={150} height={150} alt={'Logo UNA'} />
+            <Image src={'/LogoUniVagas.png'} width={150} height={150} alt={'Logo UniVagas'} />
             <span className='text-2xl font-extrabold uppercase md:text-3xl'>Bem-vindo(a) ao Portal de Vagas!</span>
           </div>
 
