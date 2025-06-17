@@ -145,7 +145,7 @@ export default function PaginaGestaoCandidaturas() {
                                 target='_blank'
                                 rel='noopener noreferrer'
                               >
-                                <MessageSquare size={16} />
+                                <img src='/whatsapp.svg' alt='WhatsApp' className='w-4 h-4' />
                               </a>
                             </Button>
                           ) : (
