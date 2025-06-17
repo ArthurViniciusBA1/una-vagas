@@ -37,7 +37,11 @@ export default function FormLoginAdmin() {
       const result = await res.json();
 
       if (!res.ok) {
-        toast.error(result.error?.form || result.error || 'E-mail ou senha inválidos, ou acesso não permitido.');
+        toast.error(
+          result.error?.form ||
+            result.error ||
+            'E-mail ou senha inválidos, ou acesso não permitido.'
+        );
         return;
       }
 
@@ -77,14 +81,25 @@ export default function FormLoginAdmin() {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <FloatingLabelInput label='Senha' id='senhaAdmin' type='password' autoComplete='current-password' {...field} />
+                <FloatingLabelInput
+                  label='Senha'
+                  id='senhaAdmin'
+                  type='password'
+                  autoComplete='current-password'
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <Button type='submit' disabled={form.formState.isSubmitting} variant='default' className='w-full cursor-pointer mt-4'>
+        <Button
+          type='submit'
+          disabled={form.formState.isSubmitting}
+          variant='default'
+          className='w-full cursor-pointer mt-4'
+        >
           {form.formState.isSubmitting ? 'Entrando...' : 'Acessar Painel Admin'}
         </Button>
       </form>

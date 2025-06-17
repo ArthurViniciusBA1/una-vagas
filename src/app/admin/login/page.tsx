@@ -9,7 +9,11 @@ export default function PaginaLoginAdmin() {
   return (
     <>
       <main className='relative w-full flex flex-col items-center justify-center gap-8 py-8 px-4'>
-        <Link href='/' className='absolute left-2 top-4 md:left-4 md:top-6' aria-label='Voltar para a página inicial'>
+        <Link
+          href='/'
+          className='absolute left-2 top-4 md:left-4 md:top-6'
+          aria-label='Voltar para a página inicial'
+        >
           <CornerUpLeft size={25} />
         </Link>
         <div className='text-center'>
