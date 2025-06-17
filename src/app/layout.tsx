@@ -10,7 +10,7 @@ const monstserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: 'Vagas UNA',
+  title: 'Uni Vagas',
   description: 'Vagas UNA | Una Itabira',
 };
 
